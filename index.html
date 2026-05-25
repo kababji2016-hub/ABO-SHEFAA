@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -162,7 +161,6 @@ body {
 .yellow { border-color: var(--yellow); }
 .green { border-color: var(--green); }
 .blue { border-color: var(--blue); }
-.gray { border-color: var(--gray); }
 
 .tabs {
   display: flex;
@@ -255,6 +253,7 @@ td {
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: var(--shadow);
+  max-width: 400px;
 }
 
 .section-title {
@@ -269,7 +268,6 @@ td {
 
 <div class="header">
   <div class="header-inner">
-
     <div class="header-brand">
       <div class="logo-circle">🍖</div>
       <div class="brand-text">
@@ -277,18 +275,15 @@ td {
         <p>لوحة تنبيهات الوثائق والإقامات</p>
       </div>
     </div>
-
     <div class="header-right">
       <div class="date-badge" id="currentDate"></div>
       <div class="manager-badge">👤 أبو شفاء</div>
       <button class="sync-btn" onclick="loadData()">🔄 تحديث</button>
     </div>
-
   </div>
 </div>
 
 <div class="main">
-
   <div class="kpi-grid" id="kpiGrid"></div>
 
   <div class="tabs">
@@ -297,30 +292,19 @@ td {
   </div>
 
   <div id="tabContent"></div>
-
 </div>
 
 <script>
-
 // =========================================
-// رابط Apps Script
+// رابط برمجيات جوجل سكريبت (تأكد من تحديثه بعد النشر الجديد)
 // =========================================
-
-const API_URL = 'https://script.google.com/macros/s/AKfycbzngQLqr3bdV9zU_i5MDIivCxGnm0z5xXzXOjLC9dNvQK2ODO-c9G89BlHZMx429bwv9A/exec';
-
-// =========================================
-// Variables
-// =========================================
+const API_URL = 'https://script.google.com/macros/s/AKfycbxL-cOnEwoRf1kPJOPmWmJzZGUIMZAwi3zsqBljmsNss3J1tYw-NTDCaczQTzaq6FtQmQ/exec';
 
 let allData = [];
 let activeTab = 'alerts';
 
 const TODAY = new Date();
 TODAY.setHours(0,0,0,0);
-
-// =========================================
-// Date
-// =========================================
 
 document.getElementById('currentDate').textContent =
   TODAY.toLocaleDateString('ar-SA', {
@@ -330,290 +314,195 @@ document.getElementById('currentDate').textContent =
     day: 'numeric'
   });
 
-// =========================================
-// Load Data
-// =========================================
-
 function loadData() {
-
+  document.getElementById('tabContent').innerHTML = '<p style="text-align:center; padding: 20px; font-weight: bold;">جاري تحميل وتنقيح البيانات الحية...</p>';
+  
   fetch(API_URL)
     .then(r => r.json())
     .then(data => {
-
       allData = data;
-
       renderKPIs();
       renderTab(activeTab);
-
     })
     .catch(err => {
-      alert('خطأ في تحميل البيانات: ' + err.message);
+      alert('خطأ في الاتصال أو استرداد البيانات من السكريبت: ' + err.message);
     });
 }
 
-// =========================================
-// Status
-// =========================================
-
 function getStatus(days) {
-
   if (days < 0) return 'expired';
-
   if (days <= 14) return 'critical';
-
   if (days <= 30) return 'soon';
-
   return 'ok';
 }
 
 function statusLabel(days) {
-
-  if (days < 0) {
-    return 'منتهية';
-  }
-
-  return days + ' يوم';
+  if (days < 0) return 'منتهية (' + Math.abs(days) + ' يوم)';
+  if (days === 0) return 'تنتهي اليوم';
+  return 'متبقي ' + days + ' يوم';
 }
 
 function docTypeLabel(type) {
-
   const map = {
     'اقامات': '🪪 إقامة',
     'التامين الطبي': '🏥 تأمين طبي',
     'عقود العمل': '📄 عقد عمل',
     'السجلات والرخص': '📜 سجل / رخصة'
   };
-
   return map[type] || type;
 }
 
-// =========================================
-// KPIs
-// =========================================
-
 function renderKPIs() {
-
   const expired = allData.filter(r => r.days < 0).length;
-
   const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
-
   const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
-
   const ok = allData.filter(r => r.days > 30).length;
 
   document.getElementById('kpiGrid').innerHTML = `
-
     <div class="kpi-card red">
       <div>🔴</div>
       <h2>${expired}</h2>
       <p>وثائق منتهية</p>
     </div>
-
     <div class="kpi-card orange">
       <div>🟠</div>
       <h2>${critical}</h2>
       <p>تنتهي خلال 14 يوم</p>
     </div>
-
     <div class="kpi-card yellow">
       <div>🟡</div>
       <h2>${soon}</h2>
       <p>تنتهي خلال شهر</p>
     </div>
-
     <div class="kpi-card green">
       <div>🟢</div>
       <h2>${ok}</h2>
       <p>سارية المفعول</p>
     </div>
-
     <div class="kpi-card blue">
       <div>📋</div>
       <h2>${allData.length}</h2>
       <p>إجمالي الوثائق</p>
     </div>
-
   `;
 }
 
-// =========================================
-// Tabs
-// =========================================
-
 function switchTab(tab) {
-
   activeTab = tab;
-
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-
-  event.target.classList.add('active');
-
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  
+  if (tab === 'alerts') {
+    document.querySelectorAll('.tab-btn')[0].classList.add('active');
+  } else {
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+  }
+  
   renderTab(tab);
 }
 
 function renderTab(tab) {
-
   const el = document.getElementById('tabContent');
 
   if (tab === 'alerts') {
-
     const items = allData
       .filter(r => r.days < 30)
       .sort((a,b) => a.days - b.days);
 
-    el.innerHTML = buildTable(items, '⚡ التنبيهات العاجلة');
-
-    renderCharts();
+    el.innerHTML = buildTable(items, '⚡ التنبيهات العاجلة (المنتهية والتي تقترب من الانتهاء)');
+    renderCharts(items);
   }
 
   if (tab === 'all') {
-
-    const items = allData
-      .sort((a,b) => a.days - b.days);
-
-    el.innerHTML = buildTable(items, '📋 جميع الوثائق');
+    const items = allData.sort((a,b) => a.days - b.days);
+    el.innerHTML = buildTable(items, '📋 جميع وثائق منشأة كبابجي');
+    renderCharts(items);
   }
 }
 
-// =========================================
-// Build Table
-// =========================================
-
 function buildTable(items, title) {
+  if (items.length === 0) {
+    return `
+      <div class="section-title">${title}</div>
+      <div style="background:#fff; padding:30px; border-radius:14px; text-align:center; color:var(--muted); box-shadow:var(--shadow)">
+         👍 لا توجد تنبيهات حالية، جميع الوثائق في وضع سليم!
+      </div>`;
+  }
 
   return `
-
     <div class="section-title">${title}</div>
-
     <div class="chart-panel">
-      <canvas id="statusChart" height="90"></canvas>
+      <canvas id="statusChart" height="250"></canvas>
     </div>
-
     <div class="full-table">
-
       <div class="panel-header">
-        <strong>${title}</strong>
+        <strong>قائمة البيانات (${items.length} سجل)</strong>
       </div>
-
       <table>
-
         <thead>
           <tr>
             <th>#</th>
-            <th>الاسم</th>
+            <th>الاسم / الوثيقة</th>
             <th>الفرع</th>
             <th>النوع</th>
             <th>تاريخ الانتهاء</th>
-            <th>الحالة</th>
+            <th>الحالة والمتبقي</th>
           </tr>
         </thead>
-
         <tbody>
-
           ${items.map((r,i) => {
-
             const st = getStatus(r.days);
-
             return `
-
               <tr>
-
                 <td>${i+1}</td>
-
-                <td>
-                  <strong>${r.name}</strong>
-                </td>
-
-                <td>
-                  <span class="branch-tag">${r.branch}</span>
-                </td>
-
-                <td>
-                  ${docTypeLabel(r.type)}
-                </td>
-
-                <td>
-                  ${r.expiry}
-                </td>
-
+                <td><strong>${r.name}</strong></td>
+                <td><span class="branch-tag">${r.branch}</span></td>
+                <td>${docTypeLabel(r.type)}</td>
+                <td><code style="font-family:monospace; font-size:14px;">${r.expiry}</code></td>
                 <td>
                   <span class="status-pill ${st}">
                     ${statusLabel(r.days)}
                   </span>
                 </td>
-
               </tr>
-
             `;
-
           }).join('')}
-
         </tbody>
-
       </table>
-
     </div>
-
   `;
 }
 
-// =========================================
-// Charts
-// =========================================
-
-function renderCharts() {
-
+function renderCharts(filteredItems) {
   const canvas = document.getElementById('statusChart');
-
   if (!canvas) return;
 
-  const expired = allData.filter(r => r.days < 0).length;
-
-  const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
-
-  const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
-
-  const ok = allData.filter(r => r.days > 30).length;
+  const expired = filteredItems.filter(r => r.days < 0).length;
+  const critical = filteredItems.filter(r => r.days >= 0 && r.days <= 14).length;
+  const soon = filteredItems.filter(r => r.days > 14 && r.days <= 30).length;
+  const ok = filteredItems.filter(r => r.days > 30).length;
 
   new Chart(canvas, {
-
     type: 'doughnut',
-
     data: {
-
-      labels: [
-        'منتهية',
-        'عاجلة',
-        'قريبة',
-        'سارية'
-      ],
-
+      labels: ['منتهية', 'عاجلة (<=14 يوم)', 'قريبة (<=30 يوم)', 'سارية المفعول'],
       datasets: [{
-
         data: [expired, critical, soon, ok],
-
-        backgroundColor: [
-          '#C0392B',
-          '#D35400',
-          '#D4AC0D',
-          '#1E8449'
-        ]
-
+        backgroundColor: ['#C0392B', '#D35400', '#D4AC0D', '#1E8449']
       }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { font: { family: 'Tajawal' } } }
+      }
     }
   });
 }
 
-// =========================================
-// Start
-// =========================================
-
+// البدء في تحميل البيانات عند فتح الصفحة
 loadData();
-
 </script>
 
 </body>
 </html>
-```
