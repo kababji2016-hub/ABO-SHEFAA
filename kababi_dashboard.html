@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>كبابجي - لوحة تنبيهات الوثائق</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --red: #C0392B;
+    --red-light: #FADBD8;
+    --orange: #D35400;
+    --orange-light: #FAE5D3;
+    --yellow: #D4AC0D;
+    --yellow-light: #FEF9E7;
+    --green: #1E8449;
+    --green-light: #D5F5E3;
+    --blue: #1A5276;
+    --blue-light: #D6EAF8;
+    --gray: #5D6D7E;
+    --gray-light: #EAF0FB;
+    --bg: #F4F6FA;
+    --card: #fff;
+    --text: #1a202c;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 14px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 60%, #0F3460 100%);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 4px 12px rgba(231,76,60,0.4);
+  }
+
+  .brand-text h1 {
+    font-size: 22px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-text p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 2px;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .date-badge {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 8px 16px;
+    color: rgba(255,255,255,0.85);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .manager-badge {
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+    border-radius: 8px;
+    padding: 8px 16px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .sync-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    padding: 9px 18px;
+    color: #fff;
+    font-size: 13px;
+    font-family: 'Tajawal', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+
+  .sync-btn:hover { background: rgba(255,255,255,0.25); }
+  .sync-btn.loading { opacity: 0.7; }
+
+  .spin { animation: spin 1s linear infinite; display: inline-block; }
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+  .main { max-width: 1400px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .error-banner {
+    background: #FEF3F2;
+    border: 1px solid #FCA5A5;
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: none;
+    color: #991B1B;
+    font-size: 14px;
+  }
+
+  .config-panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+
+  .config-panel h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--bg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .config-fields {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  .config-fields input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color 0.2s;
+    direction: ltr;
+  }
+
+  .config-fields input:focus {
+    outline: none;
+    border-color: #1A5276;
+  }
+
+  .connect-btn {
+    background: linear-gradient(135deg, #1A5276, #1A3A6B);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s;
+  }
+
+  .connect-btn:hover { opacity: 0.9; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 22px 22px 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-right: 5px solid transparent;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s;
+  }
+
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-card.danger { border-right-color: var(--red); }
+  .kpi-card.warning { border-right-color: var(--orange); }
+  .kpi-card.caution { border-right-color: var(--yellow); }
+  .kpi-card.good { border-right-color: var(--green); }
+  .kpi-card.info { border-right-color: var(--blue); }
+  .kpi-card.total { border-right-color: var(--gray); }
+
+  .kpi-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .kpi-value {
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .kpi-card.danger .kpi-value { color: var(--red); }
+  .kpi-card.warning .kpi-value { color: var(--orange); }
+  .kpi-card.caution .kpi-value { color: var(--yellow); }
+  .kpi-card.good .kpi-value { color: var(--green); }
+  .kpi-card.info .kpi-value { color: var(--blue); }
+  .kpi-card.total .kpi-value { color: var(--gray); }
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+    opacity: 0.8;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title .badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: var(--red);
+    color: #fff;
+  }
+
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+
+  .panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+  }
+
+  .panel-header h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .panel-body { padding: 0; }
+
+  .alert-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .alert-item:last-child { border-bottom: none; }
+  .alert-item:hover { background: var(--bg); }
+
+  .alert-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .alert-dot.expired { background: var(--red); box-shadow: 0 0 6px rgba(192,57,43,0.4); }
+  .alert-dot.critical { background: var(--orange); }
+  .alert-dot.soon { background: var(--yellow); }
+  .alert-dot.ok { background: var(--green); }
+
+  .alert-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .alert-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .alert-type {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 3px 9px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .days-badge {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  .days-badge.expired { background: var(--red-light); color: var(--red); }
+  .days-badge.critical { background: var(--orange-light); color: var(--orange); }
+  .days-badge.soon { background: var(--yellow-light); color: var(--yellow); }
+  .days-badge.ok { background: var(--green-light); color: var(--green); }
+
+  .chart-panel {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 22px;
+    margin-bottom: 28px;
+  }
+
+  .chart-panel h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-btn {
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+
+  .filter-btn.active, .filter-btn:hover {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+  }
+
+  .full-table {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+
+  .full-table .panel-header { padding: 18px 22px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  th {
+    background: var(--bg);
+    padding: 12px 16px;
+    text-align: right;
+    font-weight: 700;
+    color: var(--muted);
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg); }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .status-pill.expired { background: var(--red-light); color: var(--red); }
+  .status-pill.critical { background: var(--orange-light); color: var(--orange); }
+  .status-pill.soon { background: var(--yellow-light); color: var(--yellow); }
+  .status-pill.ok { background: var(--green-light); color: var(--green); }
+
+  .branch-tag {
+    background: var(--gray-light);
+    color: var(--gray);
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+
+  .loading-state .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 22px;
+    width: fit-content;
+  }
+
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 7px;
+    border: none;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  .section-divider {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 10px 0 8px;
+    margin: 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .branch-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .branch-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .branch-card .b-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .branch-card .b-counts {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .b-count {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 700;
+  }
+
+  .b-count.red { background: var(--red-light); color: var(--red); }
+  .b-count.orange { background: var(--orange-light); color: var(--orange); }
+  .b-count.green { background: var(--green-light); color: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="logo-circle">🍖</div>
+      <div class="brand-text">
+        <h1>كبابجي</h1>
+        <p>لوحة تنبيهات الوثائق والإقامات</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="date-badge" id="currentDate">—</div>
+      <div class="manager-badge">👤 أبو شفاء</div>
+      <button class="sync-btn" id="syncBtn" onclick="loadData()">
+        <span id="syncIcon">🔄</span> تحديث
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <!-- Config Panel -->
+  <div class="config-panel" id="configPanel">
+    <h3>⚙️ إعدادات مصدر البيانات (Google Sheets)</h3>
+    <div class="config-fields">
+      <input type="text" id="sheetUrl" placeholder="الصق رابط Google Sheets هنا (مثال: https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/...)" />
+      <button class="connect-btn" onclick="connectSheet()">🔗 ربط الجدول</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px;">
+      ملاحظة: يجب أن يكون الجدول منشوراً للعموم. بعد نشره اضغط "ربط الجدول" لتحميل البيانات تلقائياً.
+    </p>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpiGrid">
+    <div class="loading-state" style="grid-column:1/-1;padding:30px">
+      <div class="spinner"></div>
+      <p>في انتظار ربط مصدر البيانات...</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('alerts')">🔔 التنبيهات العاجلة</button>
+    <button class="tab-btn" onclick="switchTab('weekly')">📅 هذا الأسبوع</button>
+    <button class="tab-btn" onclick="switchTab('monthly')">📆 هذا الشهر</button>
+    <button class="tab-btn" onclick="switchTab('all')">📋 جميع الوثائق</button>
+    <button class="tab-btn" onclick="switchTab('branches')">🏪 الفروع</button>
+  </div>
+
+  <div id="tabContent"></div>
+
+</div>
+
+<script>
+let allData = [];
+let activeTab = 'alerts';
+let sheetId = '';
+let apiKey = '';
+
+const TODAY = new Date();
+TODAY.setHours(0,0,0,0);
+
+function formatDate(d) {
+  if (!d || isNaN(d)) return '—';
+  return d.toLocaleDateString('ar-SA-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' });
+}
+
+function daysLeft(dateStr) {
+  if (!dateStr || dateStr === 'منتهية') return -9999;
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return -9999;
+    d.setHours(0,0,0,0);
+    return Math.round((d - TODAY) / 86400000);
+  } catch { return -9999; }
+}
+
+function getStatus(days) {
+  if (days < 0) return 'expired';
+  if (days === 0) return 'critical';
+  if (days <= 14) return 'critical';
+  if (days <= 30) return 'soon';
+  return 'ok';
+}
+
+function statusLabel(days) {
+  if (days < 0) return `منتهية منذ ${Math.abs(days)} يوم`;
+  if (days === 0) return 'تنتهي اليوم!';
+  if (days <= 14) return `${days} يوم متبقي ⚠️`;
+  if (days <= 30) return `${days} يوم متبقي`;
+  return `${days} يوم`;
+}
+
+function statusLabelShort(days) {
+  if (days < 0) return 'منتهية';
+  if (days === 0) return 'اليوم';
+  return `${days} يوم`;
+}
+
+function docTypeLabel(type) {
+  const map = { 'اقامات': '🪪 إقامة', 'التامين الطبي': '🏥 تأمين طبي', 'عقود العمل': '📄 عقد عمل', 'السجلات والرخص': '📜 رخصة/سجل' };
+  return map[type] || type;
+}
+
+document.getElementById('currentDate').textContent = TODAY.toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// =========== GOOGLE SHEETS INTEGRATION ===========
+function connectSheet() {
+  const url = document.getElementById('sheetUrl').value.trim();
+  if (!url) { showError('يرجى إدخال رابط Google Sheets أولاً'); return; }
+  const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (!match) { showError('الرابط غير صحيح. تأكد أنه رابط Google Sheets'); return; }
+  sheetId = match[1];
+  localStorage.setItem('kababi_sheet_id', sheetId);
+  loadData();
+}
+
+function loadData() {
+  if (!sheetId) {
+    const saved = localStorage.getItem('kababi_sheet_id');
+    if (saved) { sheetId = saved; document.getElementById('sheetUrl').value = `https://docs.google.com/spreadsheets/d/${saved}`; }
+    else return;
+  }
+
+  const syncBtn = document.getElementById('syncBtn');
+  syncBtn.classList.add('loading');
+  document.getElementById('syncIcon').innerHTML = '<span class="spin">⏳</span>';
+
+  const sheets = ['اقامات', 'التامين الطبي', 'عقود العمل', 'السجلات والرخص'];
+  const promises = sheets.map(s =>
+    fetch(`https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(s)}`)
+      .then(r => r.text())
+      .then(text => {
+        const json = JSON.parse(text.substring(47).slice(0, -2));
+        return parseSheet(json, s);
+      })
+  );
+
+  Promise.all(promises)
+    .then(results => {
+      allData = results.flat().filter(r => r.name && r.expiry);
+      hideError();
+      renderAll();
+      syncBtn.classList.remove('loading');
+      document.getElementById('syncIcon').textContent = '🔄';
+      document.getElementById('configPanel').style.display = 'none';
+    })
+    .catch(err => {
+      showError('خطأ في تحميل البيانات. تأكد أن الجدول منشور للعموم (File > Share > Publish to web). ' + err.message);
+      syncBtn.classList.remove('loading');
+      document.getElementById('syncIcon').textContent = '🔄';
+      useDemoData();
+    });
+}
+
+function parseSheet(json, sheetName) {
+  const rows = json.table.rows;
+  const cols = json.table.cols;
+  const result = [];
+
+  if (sheetName === 'السجلات والرخص') {
+    for (const row of rows) {
+      const cells = row.c;
+      if (!cells || !cells[0] || !cells[0].v) continue;
+      const name = cells[0]?.v;
+      const branch = cells[1]?.v;
+      const expiry = cells[4]?.v;
+      if (!name || name === 'اسم الوثائق' || !expiry) continue;
+      const expiryDate = parseGvizDate(cells[4]);
+      const days = expiryDate ? Math.round((expiryDate - TODAY) / 86400000) : -9999;
+      result.push({ name, branch: branch || '—', expiry: expiryDate ? expiryDate.toISOString().slice(0,10) : null, days, type: sheetName, id: Math.random() });
+    }
+  } else {
+    for (const row of rows) {
+      const cells = row.c;
+      if (!cells || !cells[1] || !cells[1].v) continue;
+      const name = cells[1]?.v;
+      const branch = cells[2]?.v;
+      const expiry = cells[6]?.v;
+      if (!name || name === 'اسم الموظف' || !expiry) continue;
+      const expiryDate = parseGvizDate(cells[6]);
+      const days = expiryDate ? Math.round((expiryDate - TODAY) / 86400000) : -9999;
+      result.push({ name, branch: branch || '—', expiry: expiryDate ? expiryDate.toISOString().slice(0,10) : null, days, type: sheetName, id: Math.random() });
+    }
+  }
+  return result;
+}
+
+function parseGvizDate(cell) {
+  if (!cell || !cell.v) return null;
+  const v = cell.v;
+  if (typeof v === 'string' && v.startsWith('Date(')) {
+    const parts = v.replace('Date(','').replace(')','').split(',').map(Number);
+    return new Date(parts[0], parts[1], parts[2]);
+  }
+  if (typeof v === 'string') {
+    const d = new Date(v);
+    return isNaN(d) ? null : d;
+  }
+  return null;
+}
+
+// =========== DEMO DATA ===========
+function useDemoData() {
+  const base = [
+    { name: 'محمود السيد', branch: 'بووم برجر', type: 'اقامات', days: 46 },
+    { name: 'حسين العشري', branch: 'الإدارة', type: 'اقامات', days: 357 },
+    { name: 'محمد فايز', branch: 'المستودع', type: 'اقامات', days: 299 },
+    { name: 'محمد حنيفا', branch: 'المستودع', type: 'اقامات', days: 9 },
+    { name: 'عبد القدوس', branch: 'السامر', type: 'اقامات', days: -104 },
+    { name: 'عرفات صادق', branch: 'بووم برجر', type: 'اقامات', days: -152 },
+    { name: 'فايزان الهندي', branch: 'التحلية', type: 'اقامات', days: -234 },
+    { name: 'محمد ولي الدين', branch: 'التحلية', type: 'اقامات', days: -135 },
+    { name: 'حسين العشري', branch: 'الإدارة', type: 'التامين الطبي', days: -1 },
+    { name: 'محمد فايز', branch: 'المستودع', type: 'التامين الطبي', days: 29 },
+    { name: 'جليل', branch: 'الحمدانية', type: 'التامين الطبي', days: 29 },
+    { name: 'شفيق', branch: 'المستودع', type: 'التامين الطبي', days: 78 },
+    { name: 'فايزان الهندي', branch: 'التحلية', type: 'التامين الطبي', days: 79 },
+    { name: 'شوهاق معشوق', branch: 'الحمدانية', type: 'التامين الطبي', days: -349 },
+    { name: 'عرفات صادق', branch: 'بووم برجر', type: 'التامين الطبي', days: -349 },
+    { name: 'محمد ولي الدين', branch: 'التحلية', type: 'عقود العمل', days: -77 },
+    { name: 'حسين العشري', branch: 'الإدارة', type: 'عقود العمل', days: 298 },
+    { name: 'محمود السيد', branch: 'بووم برجر', type: 'عقود العمل', days: 299 },
+    { name: 'محمد حسين', branch: 'الإدارة', type: 'عقود العمل', days: 4 },
+    { name: 'محمد فايز', branch: 'المستودع', type: 'عقود العمل', days: 45 },
+    { name: 'عقد ايجار الحرازات', branch: 'الحرازات', type: 'السجلات والرخص', days: -267 },
+    { name: 'عقد ايجار التحلية', branch: 'التحلية', type: 'السجلات والرخص', days: -237 },
+    { name: 'رخصة بلدية الحرازات', branch: 'الحرازات', type: 'السجلات والرخص', days: -218 },
+    { name: 'رخصة بلدية السامر', branch: 'السامر', type: 'السجلات والرخص', days: -217 },
+    { name: 'اشتراك مدد', branch: 'الإدارة', type: 'السجلات والرخص', days: -25 },
+    { name: 'رخصة بلدية الحمدانية', branch: 'الحمدانية', type: 'السجلات والرخص', days: -11 },
+  ];
+
+  const d = new Date();
+  allData = base.map(r => {
+    const exp = new Date(TODAY);
+    exp.setDate(exp.getDate() + r.days);
+    return { ...r, expiry: exp.toISOString().slice(0,10), id: Math.random() };
+  });
+
+  renderAll();
+}
+
+// =========== RENDER ===========
+function renderAll() {
+  renderKPIs();
+  renderTab(activeTab);
+}
+
+function renderKPIs() {
+  const expired = allData.filter(r => r.days < 0).length;
+  const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
+  const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
+  const ok = allData.filter(r => r.days > 30).length;
+  const thisWeek = allData.filter(r => r.days >= 0 && r.days <= 7).length;
+  const thisMonth = allData.filter(r => r.days >= 0 && r.days <= 30).length;
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi-card danger">
+      <span class="kpi-icon">🔴</span>
+      <div class="kpi-value">${expired}</div>
+      <div class="kpi-label">وثائق منتهية</div>
+      <div class="kpi-sub">تحتاج إجراء فوري</div>
+    </div>
+    <div class="kpi-card warning">
+      <span class="kpi-icon">🟠</span>
+      <div class="kpi-value">${critical}</div>
+      <div class="kpi-label">تنتهي خلال أسبوعين</div>
+      <div class="kpi-sub">عاجل جداً</div>
+    </div>
+    <div class="kpi-card caution">
+      <span class="kpi-icon">🟡</span>
+      <div class="kpi-value">${soon}</div>
+      <div class="kpi-label">تنتهي خلال شهر</div>
+      <div class="kpi-sub">تحتاج متابعة</div>
+    </div>
+    <div class="kpi-card good">
+      <span class="kpi-icon">🟢</span>
+      <div class="kpi-value">${ok}</div>
+      <div class="kpi-label">سارية المفعول</div>
+      <div class="kpi-sub">لا تحتاج إجراء</div>
+    </div>
+    <div class="kpi-card info">
+      <span class="kpi-icon">📅</span>
+      <div class="kpi-value">${thisWeek}</div>
+      <div class="kpi-label">تنتهي هذا الأسبوع</div>
+      <div class="kpi-sub">الأيام السبعة القادمة</div>
+    </div>
+    <div class="kpi-card total">
+      <span class="kpi-icon">📋</span>
+      <div class="kpi-value">${allData.length}</div>
+      <div class="kpi-label">إجمالي الوثائق</div>
+      <div class="kpi-sub">جميع الأنواع</div>
+    </div>
+  `;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    const tabs = ['alerts','weekly','monthly','all','branches'];
+    b.classList.toggle('active', tabs[i] === tab);
+  });
+  renderTab(tab);
+}
+
+function renderTab(tab) {
+  const el = document.getElementById('tabContent');
+  if (!allData.length) { el.innerHTML = ''; return; }
+
+  if (tab === 'alerts') renderAlerts(el);
+  else if (tab === 'weekly') renderPeriod(el, 0, 7, 'هذا الأسبوع');
+  else if (tab === 'monthly') renderPeriod(el, 0, 30, 'هذا الشهر');
+  else if (tab === 'all') renderAllDocs(el);
+  else if (tab === 'branches') renderBranches(el);
+}
+
+function renderAlerts(el) {
+  const urgent = allData.filter(r => r.days < 30).sort((a, b) => a.days - b.days);
+  const types = ['اقامات', 'التامين الطبي', 'عقود العمل', 'السجلات والرخص'];
+
+  let html = `<div class="section-title">⚡ التنبيهات العاجلة <span class="badge">${urgent.length}</span></div>`;
+
+  // Chart
+  const expired = allData.filter(r => r.days < 0).length;
+  const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
+  const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
+  const ok = allData.filter(r => r.days > 30).length;
+
+  html += `
+    <div class="content-grid">
+      <div class="chart-panel" style="margin-bottom:0">
+        <h3>📊 توزيع حالات الوثائق</h3>
+        <div style="position:relative;height:220px">
+          <canvas id="statusChart" role="img" aria-label="توزيع حالات الوثائق">منتهية: ${expired}، عاجلة: ${crit}، قريبة: ${soon}، سارية: ${ok}</canvas>
+        </div>
+      </div>
+      <div class="chart-panel" style="margin-bottom:0">
+        <h3>📂 الوثائق حسب النوع</h3>
+        <div style="position:relative;height:220px">
+          <canvas id="typeChart" role="img" aria-label="توزيع الوثائق حسب النوع"></canvas>
+        </div>
+      </div>
+    </div>
+    <br>
+  `;
+
+  // Alert list by category
+  for (const type of types) {
+    const items = urgent.filter(r => r.type === type);
+    if (!items.length) continue;
+    html += `
+      <div class="full-table" style="margin-bottom:16px">
+        <div class="panel-header">
+          <h3>${docTypeLabel(type)} — ${items.length} وثيقة تحتاج متابعة</h3>
+        </div>
+        <table>
+          <thead><tr><th>#</th><th>الاسم</th><th>الفرع</th><th>تاريخ الانتهاء</th><th>الحالة</th></tr></thead>
+          <tbody>
+    `;
+    items.forEach((r, i) => {
+      const st = getStatus(r.days);
+      const dt = r.expiry ? new Date(r.expiry).toLocaleDateString('ar-SA-u-nu-latn', { year:'numeric', month:'2-digit', day:'2-digit' }) : '—';
+      html += `
+        <tr>
+          <td style="color:var(--muted);font-weight:600">${i+1}</td>
+          <td><strong>${r.name}</strong></td>
+          <td><span class="branch-tag">${r.branch}</span></td>
+          <td>${dt}</td>
+          <td><span class="status-pill ${st}">${statusLabel(r.days)}</span></td>
+        </tr>
+      `;
+    });
+    html += `</tbody></table></div>`;
+  }
+
+  el.innerHTML = html;
+  renderCharts(expired, crit, soon, ok);
+}
+
+function renderCharts(expired, crit, soon, ok) {
+  setTimeout(() => {
+    const c1 = document.getElementById('statusChart');
+    const c2 = document.getElementById('typeChart');
+    if (!c1 || !c2) return;
+
+    new Chart(c1, {
+      type: 'doughnut',
+      data: {
+        labels: ['منتهية', 'عاجلة (14 يوم)', 'قريبة (شهر)', 'سارية'],
+        datasets: [{ data: [expired, crit, soon, ok], backgroundColor: ['#C0392B','#D35400','#D4AC0D','#1E8449'], borderWidth: 0 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { family: 'Tajawal', size: 12 }, padding: 10 } } } }
+    });
+
+    const typeCounts = ['اقامات','التامين الطبي','عقود العمل','السجلات والرخص'].map(t => allData.filter(r => r.type === t).length);
+    new Chart(c2, {
+      type: 'bar',
+      data: {
+        labels: ['إقامات','تأمين طبي','عقود عمل','رخص وسجلات'],
+        datasets: [{ data: typeCounts, backgroundColor: ['#1A5276','#1E8449','#D35400','#8E44AD'], borderRadius: 6, borderWidth: 0 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { grid: { display: false } }, y: { ticks: { font: { family: 'Tajawal', size: 12 } } } }
+      }
+    });
+  }, 100);
+}
+
+function renderPeriod(el, minDays, maxDays, label) {
+  const items = allData.filter(r => r.days >= minDays && r.days <= maxDays).sort((a,b) => a.days - b.days);
+  el.innerHTML = `
+    <div class="section-title">📅 ${label} (${items.length} وثيقة)</div>
+    ${items.length === 0 ? '<div class="empty-state">🎉 لا توجد وثائق تنتهي في هذه الفترة</div>' : `
+    <div class="full-table">
+      <table>
+        <thead><tr><th>#</th><th>الاسم</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الأيام المتبقية</th></tr></thead>
+        <tbody>
+          ${items.map((r,i) => {
+            const st = getStatus(r.days);
+            const dt = r.expiry ? new Date(r.expiry).toLocaleDateString('ar-SA-u-nu-latn', { year:'numeric', month:'2-digit', day:'2-digit' }) : '—';
+            return `<tr>
+              <td style="color:var(--muted);font-weight:600">${i+1}</td>
+              <td><strong>${r.name}</strong></td>
+              <td><span class="branch-tag">${r.branch}</span></td>
+              <td><small>${docTypeLabel(r.type)}</small></td>
+              <td>${dt}</td>
+              <td><span class="status-pill ${st}">${statusLabelShort(r.days)}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`}
+  `;
+}
+
+function renderAllDocs(el) {
+  let filter = 'all';
+  const filters = [
+    { key: 'all', label: 'الكل' },
+    { key: 'اقامات', label: '🪪 إقامات' },
+    { key: 'التامين الطبي', label: '🏥 تأمين طبي' },
+    { key: 'عقود العمل', label: '📄 عقود عمل' },
+    { key: 'السجلات والرخص', label: '📜 رخص وسجلات' },
+  ];
+
+  function render() {
+    const items = (filter === 'all' ? allData : allData.filter(r => r.type === filter)).sort((a,b) => a.days - b.days);
+    const tableEl = document.getElementById('allTable');
+    tableEl.innerHTML = items.map((r,i) => {
+      const st = getStatus(r.days);
+      const dt = r.expiry ? new Date(r.expiry).toLocaleDateString('ar-SA-u-nu-latn', { year:'numeric', month:'2-digit', day:'2-digit' }) : '—';
+      return `<tr>
+        <td style="color:var(--muted);font-weight:600">${i+1}</td>
+        <td><strong>${r.name}</strong></td>
+        <td><span class="branch-tag">${r.branch}</span></td>
+        <td><small>${docTypeLabel(r.type)}</small></td>
+        <td>${dt}</td>
+        <td><span class="status-pill ${st}">${statusLabel(r.days)}</span></td>
+      </tr>`;
+    }).join('');
+  }
+
+  el.innerHTML = `
+    <div class="section-title">📋 جميع الوثائق</div>
+    <div class="filter-bar">
+      ${filters.map(f => `<button class="filter-btn ${f.key==='all'?'active':''}" onclick="setFilter('${f.key}', this)">${f.label}</button>`).join('')}
+    </div>
+    <div class="full-table">
+      <table>
+        <thead><tr><th>#</th><th>الاسم</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة</th></tr></thead>
+        <tbody id="allTable"></tbody>
+      </table>
+    </div>
+  `;
+
+  window.setFilter = function(key, btn) {
+    filter = key;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  };
+
+  render();
+}
+
+function renderBranches(el) {
+  const branches = [...new Set(allData.map(r => r.branch))].sort();
+  let html = `<div class="section-title">🏪 الوثائق حسب الفرع</div>`;
+
+  html += `<div class="branch-overview">`;
+  for (const b of branches) {
+    const items = allData.filter(r => r.branch === b);
+    const exp = items.filter(r => r.days < 0).length;
+    const crit = items.filter(r => r.days >= 0 && r.days <= 14).length;
+    const ok = items.filter(r => r.days > 14).length;
+    html += `<div class="branch-card">
+      <div class="b-name">${b}</div>
+      <div class="b-counts">
+        ${exp > 0 ? `<span class="b-count red">منتهية: ${exp}</span>` : ''}
+        ${crit > 0 ? `<span class="b-count orange">عاجلة: ${crit}</span>` : ''}
+        <span class="b-count green">سارية: ${ok}</span>
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  for (const b of branches) {
+    const items = allData.filter(r => r.branch === b).sort((a,ba) => a.days - ba.days);
+    const urgentCount = items.filter(r => r.days < 30).length;
+    html += `
+      <div class="full-table" style="margin-bottom:16px">
+        <div class="panel-header">
+          <h3>🏪 ${b}</h3>
+          <span style="font-size:12px;color:var(--muted)">${items.length} وثيقة${urgentCount > 0 ? ` — <span style="color:var(--red);font-weight:700">${urgentCount} تحتاج متابعة</span>` : ''}</span>
+        </div>
+        <table>
+          <thead><tr><th>الاسم</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة</th></tr></thead>
+          <tbody>
+            ${items.map(r => {
+              const st = getStatus(r.days);
+              const dt = r.expiry ? new Date(r.expiry).toLocaleDateString('ar-SA-u-nu-latn', { year:'numeric', month:'2-digit', day:'2-digit' }) : '—';
+              return `<tr>
+                <td><strong>${r.name}</strong></td>
+                <td><small>${docTypeLabel(r.type)}</small></td>
+                <td>${dt}</td>
+                <td><span class="status-pill ${st}">${statusLabel(r.days)}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  el.innerHTML = html;
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBanner');
+  el.textContent = '⚠️ ' + msg;
+  el.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('errorBanner').style.display = 'none';
+}
+
+// Auto load on startup
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('kababi_sheet_id');
+  if (saved) {
+    sheetId = saved;
+    document.getElementById('sheetUrl').value = `https://docs.google.com/spreadsheets/d/${saved}`;
+    loadData();
+  } else {
+    useDemoData();
+  }
+});
+</script>
+
+</body>
+</html>
