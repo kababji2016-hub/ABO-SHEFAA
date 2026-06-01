@@ -7,7 +7,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght=400;500;700;900&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
@@ -86,8 +86,8 @@
 
   .global-search-container {
     flex: 1;
-    max-width: 450px;
-    min-width: 260px;
+    max-width: 400px;
+    min-width: 240px;
   }
   .global-search-input {
     width: 100%;
@@ -109,9 +109,28 @@
   }
   .global-search-input::placeholder { color: rgba(255,255,255,0.5); }
 
-  .header-right { display: flex; align-items: center; gap: 14px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
   .date-badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 12px; font-weight: 500; }
   .manager-badge { background: linear-gradient(135deg, #E74C3C, #C0392B); border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 12px; font-weight: 700; }
+
+  /* زر تجربة الصوت والنظام الاحترافي */
+  .test-sound-btn {
+    background: linear-gradient(135deg, #2980B9, #3498DB);
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    color: #fff;
+    font-size: 12px;
+    font-family: 'Tajawal', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+  }
+  .test-sound-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(52, 152, 219, 0.4); }
 
   .sync-btn {
     background: rgba(255,255,255,0.15);
@@ -240,7 +259,6 @@
   .loading-state .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; font-weight: bold; background: #fff; border-radius: var(--radius); }
 
-  /* الأيقونة الجانبية الثابتة الجديدة */
   .floating-expired-btn {
     position: fixed;
     left: 24px;
@@ -264,7 +282,6 @@
   .floating-expired-btn:hover { transform: scale(1.05); background: #a13024; }
   .floating-expired-btn .badge-count { background: #fff; color: var(--red); padding: 2px 8px; border-radius: 20px; font-size: 12px; }
 
-  /* النافذة المنبثقة للأرشيف المنتهي */
   .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -298,19 +315,61 @@
   .archive-stat-card { background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
   .archive-stat-card .num { font-size: 20px; font-weight: 900; color: var(--red); }
   .archive-stat-card .lbl { font-size: 12px; color: var(--muted); font-weight: 700; margin-top: 2px; }
+
+  /* 🔔 ستايل نظام الإشعارات المنبثقة الاحترافي (Toasts Container) */
+  #toastContainer {
+    position: fixed;
+    top: 85px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 320px;
+    pointer-events: none;
+  }
+  .toast {
+    background: #fff;
+    color: var(--text);
+    padding: 14px 16px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    border-right: 5px solid var(--blue);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    pointer-events: auto;
+    animation: toastIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: all 0.3s ease;
+  }
+  @keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  .toast.fade-out { transform: translateX(120%); opacity: 0; }
+  .toast-icon { font-size: 20px; }
+  .toast-content { flex: 1; }
+  .toast-title { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+  .toast-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .toast-close { background: none; border: none; font-size: 16px; cursor: pointer; color: #94a3b8; }
+  .toast-close:hover { color: #475569; }
+  
+  /* ألوان مخصصة لنوع الإشعار */
+  .toast.success { border-right-color: var(--green); }
+  .toast.warning { border-right-color: var(--orange); }
+  .toast.error { border-right-color: var(--red); }
 </style>
 </head>
 <body>
 
+<div id="toastContainer"></div>
+
 <button class="floating-expired-btn" onclick="openArchiveModal()">
-  ⚠️ الوثائق المنتهية القديمة 
+  ⚠️ المنتهية قديمة (> 30 يوم) 
   <span class="badge-count" id="floatingBadge">0</span>
 </button>
 
 <div class="modal-overlay" id="archiveModal">
   <div class="modal-box">
     <div class="modal-header">
-      <h2>🗄️ أرشيف التصفية الخاص بالوثائق المنتهية (قبل الشهر الحالي)</h2>
+      <h2>🗄️ أرشيف الوثائق المنتهية قديماً (خارج نطاق الـ 30 يوماً الماضية)</h2>
       <button class="close-modal" onclick="closeArchiveModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -318,7 +377,7 @@
       
       <div class="search-export-container">
         <div class="search-box">
-          <input type="text" id="archiveSearch" placeholder="🔍 ابحث في الأرشيف القديم باسم الموظف أو الفرع..." oninput="filterArchiveTable()">
+          <input type="text" id="archiveSearch" placeholder="🔍 ابحث في الأرشيف القديم باسم الموظف، البيان أو الفرع..." oninput="filterArchiveTable()">
         </div>
       </div>
 
@@ -326,7 +385,7 @@
         <div class="table-wrapper">
           <table>
             <thead>
-              <tr><th>#</th><th>الاسم والبيان</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الوضعية والمدة</th><th>إجراء</th></tr>
+              <tr><th>#</th><th>الاسم والبيان</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة والمدة الفائتة</th><th>إجراء</th></tr>
             </thead>
             <tbody id="archiveTableBody"></tbody>
           </table>
@@ -353,6 +412,11 @@
     <div class="header-right">
       <div class="date-badge" id="currentDate">—</div>
       <div class="manager-badge">👤 أبو شفاء</div>
+      
+      <button class="test-sound-btn" onclick="triggerSystemTestNotification()">
+        🔔 تجربة الإشعار والصوت
+      </button>
+
       <button class="sync-btn" id="syncBtn" onclick="loadData()">
         <span id="syncIcon">🔄</span> تحديث البيانات
       </button>
@@ -367,7 +431,7 @@
   <div class="safety-score-panel" id="safetyPanel" style="display:none;">
     <div class="safety-info">
       <div class="safety-title">🛡️ مؤشر الأمان النظامي والتشغيلي لمنشأة كبابجي</div>
-      <div class="safety-desc">يقيس نسبة الاستقرار القانوني وتفادي المخالفات (مبني على الوثائق الحالية والمستقبلية فقط).</div>
+      <div class="safety-desc">يقيس استقرار السجلات الحالية ومتابعة الأوراق القريبة (يستبعد المنتهي قديماً قبل 30 يوماً).</div>
     </div>
     <div class="score-container">
       <div class="score-bar-bg">
@@ -387,7 +451,7 @@
   <div class="tabs">
     <button class="tab-btn active" id="tab-alerts" onclick="switchTab('alerts')">🔔 التنبيهات العاجلة</button>
     <button class="tab-btn" id="tab-weekly" onclick="switchTab('weekly')">📅 تنتهي هذا الأسبوع</button>
-    <button class="tab-btn" id="tab-monthly" onclick="switchTab('monthly')">📆 تنتهي هذا الشهر</button>
+    <button class="tab-btn" id="tab-monthly" onclick="switchTab('monthly')">📆 تنتهي هذا الشهر / منتهية جديداً</button>
     <button class="tab-btn" id="tab-all" onclick="switchTab('all')">📋 جرد الوثائق والتصفية</button>
     <button class="tab-btn" id="tab-branches" onclick="switchTab('branches')">🏪 الفروع والمسؤوليات</button>
   </div>
@@ -399,30 +463,99 @@
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbxL-cOnEwoRf1kPJOPmWmJzZGUIMZAwi3zsqBljmsNss3J1tYw-NTDCaczQTzaq6FtQmQ/exec';
 
-let rawData = [];       // كل البيانات القادمة من السيرفر
-let allData = [];       // البيانات الحية فقط (المستقبلية + المنتهية في الشهر الحالي)
-let archivedData = [];  // الأرشيف المنتهي القديم (قبل الشهر الحالي)
+let rawData = [];       
+let allData = [];       
+let archivedData = [];  
 
 let activeTab = 'alerts';
 let currentSubFilter = 'all';
 let searchQuery = '';
+let isFirstLoad = true; // متغير لمنع تكرار الصوت عند التحديثات اليدوية إلا للجديد
 
 const TODAY = new Date();
 TODAY.setHours(0,0,0,0);
 
-// دالة لمعرفة هل التاريخ منتهي في شهور سابقة قديمة أم لا
-function isOldExpired(expiryStr, days) {
-  if (days >= 0) return false; // سارية أو تنتهي اليوم
+// 🎵 دالة توليد صوت التنبيه برمجياً (Audio Context) ليعمل على أي جهاز بدون ملف خارجي وبشكل احترافي
+function playNotificationSound(type = 'default') {
   try {
-    const expDate = new Date(expiryStr);
-    if (isNaN(expDate.getTime())) return false;
-    // إذا كان المتبقي أقل من 0 والشهر والسنة أقل من الشهر الحالي، فهي قديمة جداً
-    if (expDate.getFullYear() < TODAY.getFullYear()) return true;
-    if (expDate.getFullYear() === TODAY.getFullYear() && expDate.getMonth() < TODAY.getMonth()) return true;
-    return false; // انتهت في نفس الشهر الحالي
-  } catch(e) {
-    return false;
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    
+    // نغمة احترافية مزدوجة متناسقة
+    if (type === 'warning' || type === 'error') {
+      // نغمة تنبيه حادة قليلاً للأخطاء والمنتهيات
+      playTone(ctx, 523.25, 0.1, 0);      // C5
+      playTone(ctx, 659.25, 0.15, 0.1);   // E5
+    } else {
+      // نغمة نجاح أو إشعار عام ناعمة ومريحة
+      playTone(ctx, 587.33, 0.08, 0);     // D5
+      playTone(ctx, 880.00, 0.12, 0.08);   // A5
+    }
+  } catch (e) {
+    console.log("صلاحيات المتصفح تمنع تشغيل الصوت تلقائياً حتى يتفاعل المستخدم أولاً.");
   }
+}
+
+function playTone(ctx, freq, duration, delay) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+  
+  gain.gain.setValueAtTime(0.15, ctx.currentTime + delay);
+  // سحب تدريجي للصوت (Fade out) ليعطي طابعاً ناعماً ومريحاً
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration);
+  
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  
+  osc.start(ctx.currentTime + delay);
+  osc.stop(ctx.currentTime + delay + duration);
+}
+
+// 🔔 دالة إظهار الإشعار المرئي الاحترافي على الشاشة
+function showToast(title, desc, type = 'default') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  
+  let icon = '🔔';
+  if (type === 'success') icon = '✅';
+  if (type === 'warning') icon = '🟠';
+  if (type === 'error') icon = '🚨';
+
+  toast.innerHTML = `
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-content">
+      <div class="toast-title">${title}</div>
+      <div class="toast-desc">${desc}</div>
+    </div>
+    <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
+  `;
+
+  container.appendChild(toast);
+  
+  // تشغيل الصوت المتوافق مع نوع التنبيه
+  playNotificationSound(type);
+
+  // إخفاء التنبيه تلقائياً بعد 5 ثوانٍ بحركة انسيابية
+  setTimeout(() => {
+    toast.classList.add('fade-out');
+    setTimeout(() => toast.remove(), 300);
+  }, 5000);
+}
+
+// 🎯 دالة تجربة النظام الفوري عند الضغط على الزر
+function triggerSystemTestNotification() {
+  showToast(
+    'فحص وتجربة النظام',
+    'نظام الصوت والإشعارات الفورية يعمل بنجاح وكفاءة تامة في مطاعم كبابجي!',
+    'success'
+  );
 }
 
 function loadData() {
@@ -430,7 +563,6 @@ function loadData() {
   syncBtn.removeAttribute('onclick');
   document.getElementById('syncIcon').innerHTML = '<span class="spin">⏳</span>';
 
-  // تحديث تاريخ اليوم المعروض
   document.getElementById('currentDate').textContent = TODAY.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
   fetch(API_URL)
@@ -438,21 +570,40 @@ function loadData() {
     .then(data => {
       rawData = data.filter(r => r.name && r.expiry);
       
-      // الفرز والتقسيم الذكي بناءً على رغبتك
-      allData = rawData.filter(r => !isOldExpired(r.expiry, r.days));
-      archivedData = rawData.filter(r => isOldExpired(r.expiry, r.days));
+      allData = rawData.filter(r => r.days >= -30);
+      archivedData = rawData.filter(r => r.days < -30);
 
-      // تحديث الأيقونة العائمة
       document.getElementById('floatingBadge').textContent = archivedData.length;
 
       hideError();
       calculateSafetyScore();
       renderAll();
+      
+      // إطلاق إشعار صوتي ومرئي احترافي عند اكتمال جلب البيانات بنجاح لقراءة حالة النظام
+      const expiredCount = allData.filter(r => r.days < 0).length;
+      const criticalCount = allData.filter(r => r.days >= 0 && r.days <= 14).length;
+
+      if (isFirstLoad) {
+        if (expiredCount > 0 || criticalCount > 0) {
+          showToast(
+            'تنبيهات النظام الحالية',
+            `تم سحب البيانات الحية. يوجد حالياً ${expiredCount} وثائق منتهية و ${criticalCount} وثائق حرجة جداً تحت المتابعة.`,
+            'error'
+          );
+        } else {
+          showToast('مزامنة ناجحة', 'تم جلب المؤشرات الحية بنجاح وجميع السجلات الحالية مستقرة وآمنة.', 'success');
+        }
+        isFirstLoad = false;
+      } else {
+        showToast('تحديث فوري', 'تم تحديث جرد الأوراق والمؤشرات والرسوم البيانية فوراً.', 'success');
+      }
+
       document.getElementById('syncIcon').textContent = '🔄';
       syncBtn.setAttribute('onclick', 'loadData()');
     })
     .catch(err => {
       showError('خطأ في مزامنة البيانات الحية: ' + err.message);
+      showToast('فشل المزامنة', 'تعذر الاتصال بخادم جدول البيانات، يرجى التحقق من اتصال الإنترنت.', 'error');
       document.getElementById('syncIcon').textContent = '🔄';
       syncBtn.setAttribute('onclick', 'loadData()');
     });
@@ -463,10 +614,10 @@ function hideError() { document.getElementById('errorBanner').style.display = 'n
 
 function calculateSafetyScore() {
   if(!allData.length) return;
-  const expiredInCurrentMonth = allData.filter(r => r.days < 0).length;
+  const recentExpired = allData.filter(r => r.days < 0).length; 
   const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
   
-  let score = 100 - ((expiredInCurrentMonth * 4) + (critical * 1.5));
+  let score = 100 - ((recentExpired * 4) + (critical * 1.5));
   if(score < 0) score = 0;
   score = Math.round(score);
 
@@ -500,15 +651,15 @@ function handleGlobalSearch(query) {
 function copyReminder(name, type, days, expiry) {
   let text = "";
   if(days < 0) {
-    text = `⚠️ *تذكير عاجل - مطاعم كبابجي* ⚠️\n\nتفيد لوحة المؤشرات بأن وثيقة (*${type}*) الخاصة بـ *${name}* منتهية منذ ${Math.abs(days)} يوم (تاريخ الانتهاء: ${expiry}).\nيرجى العمل على التجديد فوراً لتفادي الغرامات المالية والمخالفات النظامية.`;
+    text = `⚠️ *تذكير عاجل - مطاعم كبابجي* ⚠️\n\nتفيد لوحة المؤشرات بأن وثيقة (*${type}*) الخاصة بـ *${name}* منتهية منذ ${Math.abs(days)} يوم (تاريخ الانتهاء: ${expiry}).\nيرجى العمل على التجديد فوراً لتفادي المخالفات النظامية وغرامات التأخير.`;
   } else if(days === 0) {
-    text = `🚨 *إشعار حرج جداً - مطاعم كبابجي* 🚨\n\nتفيد لوحة المؤشرات بأن وثيقة (*${type}*) الخاصة بـ *${name}* *تنتهي اليوم الحالي* (${expiry}).\nيرجى التنسيق السريع لإتمام إجراءات التجديد اليوم.`;
+    text = `🚨 *إشعار حرج جداً - مطاعم كبابجي* 🚨\n\nتفيد لوحة المؤشرات بأن وثيقة (*${type}*) الخاصة بـ *${name}* *تنتهي اليوم* (${expiry}).\nيرجى التنسيق السريع لإتمام إجراءات التجديد فوراً.`;
   } else {
-    text = `🔔 *تنببه متابعة - مطاعم كبابجي* 🔔\n\nيرجى الإحاطة بأن وثيقة (*${type}*) الخاصة بـ *${name}* متبقي على انتهائها ${days} يوم فقط (تاريخ الانتهاء: ${expiry}).\nيرجى تجهيز ومراجعة الأوراق المطلوبة للتجديد تفادياً للدخول في النطاق الحرج.`;
+    text = `🔔 *تنبيه متابعة - مطاعم كبابجي* 🔔\n\nيرجى الإحاطة بأن وثيقة (*${type}*) الخاصة بـ *${name}* متبقي على انتهائها ${days} يوم (تاريخ الانتهاء: ${expiry}).\nيرجى تجهيز ومراجعة الأوراق المطلوبة للتجديد تفادياً للدخول في النطاق الحرج.`;
   }
   
   navigator.clipboard.writeText(text).then(() => {
-    alert(`✅ تم نسخ خطاب المتابعة الجاهز لـ (${name}) بنجاح! يمكنك الآن لصقه في الواتساب أو إرساله للمسؤول.`);
+    showToast('نسخ ناجح الخطاب', `تم تجهيز ونسخ نص التذكير الخاص بـ (${name}) لجهوزية الإرسال.`, 'success');
   }).catch(() => {
     alert("فشل نسخ النص، يرجى المحاولة مرة أخرى.");
   });
@@ -522,7 +673,7 @@ function getStatus(days) {
 }
 
 function statusLabel(days) {
-  if (days < 0) return `منتهية (${Math.abs(days)} يوم) 🔴`;
+  if (days < 0) return `منتهية منذ (${Math.abs(days)} يوم) 🔴`;
   if (days === 0) return 'تنتهي اليوم 🚨';
   if (days <= 14) return `متبقي ${days} يوم 🟠`;
   return `متبقي ${days} يوم`;
@@ -536,7 +687,7 @@ function docTypeLabel(type) {
 function renderAll() { renderKPIs(); renderTab(activeTab); }
 
 function renderKPIs() {
-  const expired = allData.filter(r => r.days < 0).length; // منتهية في نفس الشهر الحالي فقط
+  const expired = allData.filter(r => r.days < 0).length; 
   const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
   const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
   const ok = allData.filter(r => r.days > 30).length;
@@ -545,8 +696,8 @@ function renderKPIs() {
     <div class="kpi-card danger">
       <span class="kpi-icon">🔴</span>
       <div class="kpi-value">${expired}</div>
-      <div class="kpi-label">منتهية (هذا الشهر)</div>
-      <div class="kpi-sub">تطلب إجراء عاجل</div>
+      <div class="kpi-label">وثائق منتهية حديثاً</div>
+      <div class="kpi-sub">منذ 30 يوم أو أقل</div>
     </div>
     <div class="kpi-card warning">
       <span class="kpi-icon">🟠</span>
@@ -558,19 +709,19 @@ function renderKPIs() {
       <span class="kpi-icon">🟡</span>
       <div class="kpi-value">${soon}</div>
       <div class="kpi-label">تنتهي خلال شهر</div>
-      <div class="kpi-sub">متابعة ما قبل الغرامة</div>
+      <div class="kpi-sub">متابعة ما قبل المخالفة</div>
     </div>
     <div class="kpi-card good">
       <span class="kpi-icon">🟢</span>
       <div class="kpi-value">${ok}</div>
       <div class="kpi-label">سارية ومستقرة</div>
-      <div class="kpi-sub">لا تطلب أي إجراء</div>
+      <div class="kpi-sub">وضع نظامي آمن</div>
     </div>
     <div class="kpi-card total">
       <span class="kpi-icon">📋</span>
       <div class="kpi-value">${allData.length}</div>
-      <div class="kpi-label">الملفات الحالية الموثقة</div>
-      <div class="kpi-sub">باستثناء المنتهي القديم</div>
+      <div class="kpi-label">إجمالي السجلات الفعالة</div>
+      <div class="kpi-sub">المستقبلية والمنتهية حديثاً</div>
     </div>
   `;
 }
@@ -590,15 +741,15 @@ function renderTab(tab) {
   if (!allData.length) { el.innerHTML = '<div class="empty-state">لا توجد بيانات محملة حالياً.</div>'; return; }
 
   if (tab === 'alerts') renderAlertsTab(el);
-  else if (tab === 'weekly') renderPeriodTab(el, -999, 7, 'متابعة أسبوعية: الأوراق الحالية والتي تنتهي خلال 7 أيام');
-  else if (tab === 'monthly') renderPeriodTab(el, -999, 30, 'متابعة شهرية: الأوراق التي تنتهي أو انتهت هذا الشهر خلال 30 يوماً');
+  else if (tab === 'weekly') renderPeriodTab(el, -30, 7, 'متابعة أسبوعية: وثائق منتهية (ضمن 30 يوم) أو تنتهي خلال 7 أيام القادمة');
+  else if (tab === 'monthly') renderPeriodTab(el, -30, 30, 'متابعة شهرية شاملة: وثائق منتهية حديثاً وتلك التي تنتهي خلال الـ 30 يوماً القادمة');
   else if (tab === 'all') renderAllDocsTab(el);
   else if (tab === 'branches') renderBranchesTab(el);
 }
 
 function renderAlertsTab(el) {
   const urgent = allData.filter(r => r.days < 30).sort((a,b) => a.days - b.days);
-  let html = `<div class="section-title">⚡ لوحة الإنذارات المبكرة الحالية <span class="badge">${urgent.length} إشعار</span></div>`;
+  let html = `<div class="section-title">⚡ لوحة الإنذارات والمتابعة السريعة الحالية <span class="badge">${urgent.length} إشعار</span></div>`;
   
   const expired = allData.filter(r => r.days < 0).length;
   const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
@@ -621,7 +772,7 @@ function renderAlertsTab(el) {
     
     tablesHtml += `
       <div class="full-table">
-        <div class="panel-header"><h3>🚨 ${docTypeLabel(type)} المستحقة</h3></div>
+        <div class="panel-header"><h3>🚨 ${docTypeLabel(type)} المستحقة للمتابعة</h3></div>
         <div class="table-wrapper">
           <table>
             <thead><tr><th>#</th><th>الاسم / البيان</th><th>الفرع</th><th>تاريخ الانتهاء</th><th>الوضعية والمهلة</th><th>متابعة سريعة</th></tr></thead>
@@ -643,7 +794,7 @@ function renderAlertsTab(el) {
     `;
   }
 
-  el.innerHTML = html + (tablesHtml || '<div class="empty-state">🎉 ممتاز! جميع الأوراق والوثائق الحالية صالحة لفترة مريحة.</div>');
+  el.innerHTML = html + (tablesHtml || '<div class="empty-state">🎉 ممتاز! جميع الأوراق والوثائق الفعالة مسجلة وصالحة لفترة آمنة.</div>');
   buildCharts(expired, crit, soon, ok);
 }
 
@@ -652,7 +803,7 @@ function renderPeriodTab(el, minDays, maxDays, title) {
   
   el.innerHTML = `
     <div class="section-title">📅 ${title} <span class="badge" style="background:var(--blue)">${items.length} سجل</span></div>
-    ${items.length === 0 ? '<div class="empty-state">🎉 الفترة المحددة سليمة بالكامل من أي انتهاءات قريبة.</div>' : `
+    ${items.length === 0 ? '<div class="empty-state">🎉 النطاق المحدد سليم بالكامل من أي مشاكل أو تواريخ مستحقة.</div>' : `
       <div class="full-table">
         <div class="table-wrapper">
           <table>
@@ -679,7 +830,7 @@ function renderPeriodTab(el, minDays, maxDays, title) {
 
 function renderAllDocsTab(el) {
   const filters = [
-    { key: 'all', label: '🗂️ عرض كل الأرشيف الحي' },
+    { key: 'all', label: '🗂️ عرض كامل الأرشيف الفعال' },
     { key: 'اقامات', label: '🪪 الإقامات' },
     { key: 'التامين الطبي', label: '🏥 التأمين الطبي' },
     { key: 'عقود العمل', label: '📄 عقود العمل' },
@@ -687,7 +838,7 @@ function renderAllDocsTab(el) {
   ];
 
   el.innerHTML = `
-    <div class="section-title">📋 فلترة الأرشيف الحالي والبحث الذكي</div>
+    <div class="section-title">📋 فلترة الأرشيف الفعال والبحث الفوري</div>
     <div class="filter-bar">
       ${filters.map(f => `<button class="filter-btn ${f.key === currentSubFilter ? 'active' : ''}" onclick="applySubFilter('${f.key}', this)">${f.label}</button>`).join('')}
     </div>
@@ -737,7 +888,7 @@ function filterAndDrawTable() {
   filtered.sort((a,b) => a.days - b.days);
 
   if(filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--muted)">🔍 لا توجد نتائج تطابق استعلامك في الأرشيف الفعال.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--muted)">🔍 لا توجد نتائج تطابق استعلامك في السجلات الحية.</td></tr>';
     return;
   }
 
@@ -756,7 +907,7 @@ function filterAndDrawTable() {
 
 function renderBranchesTab(el) {
   const branches = [...new Set(allData.map(r => r.branch))].sort();
-  let html = '<div class="section-title">🏪 تحليل وتوزيع المسؤوليات النظامية حسب الفرع (للوثائق الحالية)</div>';
+  let html = '<div class="section-title">🏪 تحليل وتوزيع المسؤوليات النظامية حسب الفرع (للوثائق الحالية والمستحقة حديثاً)</div>';
   
   html += '<div class="branch-overview">';
   branches.forEach(b => {
@@ -769,7 +920,7 @@ function renderBranchesTab(el) {
       <div class="branch-card">
         <div class="b-name">${b}</div>
         <div class="b-counts">
-          ${exp > 0 ? `<span class="b-count red">منتهية: ${exp}</span>` : ''}
+          ${exp > 0 ? `<span class="b-count red">منتهية جديداً: ${exp}</span>` : ''}
           ${crit > 0 ? `<span class="b-count orange">عاجلة: ${crit}</span>` : ''}
           <span class="b-count green">سارية: ${ok}</span>
         </div>
@@ -787,7 +938,7 @@ function renderBranchesTab(el) {
         <div class="panel-header">
           <h3>🏪 إدارة / فرع: ${b}</h3>
           <span style="font-size:12px; font-weight:bold;">
-            قوام الفرع الحالي: ${bItems.length} وثيقة ${dangerCount > 0 ? ` — (<span style="color:var(--red)">${dangerCount} مستحقة المراجعة</span>)` : ''}
+            قوام الفرع النشط: ${bItems.length} وثيقة ${dangerCount > 0 ? ` — (<span style="color:var(--red)">${dangerCount} تحت المتابعة</span>)` : ''}
           </span>
         </div>
         <div class="table-wrapper">
@@ -821,7 +972,7 @@ function buildCharts(expired, crit, soon, ok) {
     new Chart(canvas1, {
       type: 'doughnut',
       data: {
-        labels: ['منتهية (هذا الشهر)', 'عاجلة (<=14 يوم)', 'قريبة (<=30 يوم)', 'سارية'],
+        labels: ['منتهية (<=30 يوم)', 'عاجلة (<=14 يوم)', 'قريبة (<=30 يوم)', 'سارية'],
         datasets: [{ data: [expired, crit, soon, ok], backgroundColor: ['#C0392B','#D35400','#D4AC0D','#1E8449'], borderWidth: 0 }]
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { family: 'Tajawal', size: 11 } } } } }
@@ -860,13 +1011,12 @@ function exportTableToCSV() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", `جرد_وثائق_كبابجي_الحية_${new Date().toISOString().slice(0,10)}.csv`);
+  link.setAttribute("download", `جرد_وثائق_كبابجي_الفعالة_${new Date().toISOString().slice(0,10)}.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 }
 
-/* وظائف الأيقونة الجانبية والأرشيف الجديد بالكامل */
 function openArchiveModal() {
   document.getElementById('archiveModal').style.display = 'flex';
   renderArchiveMiniStats();
@@ -885,11 +1035,11 @@ function renderArchiveMiniStats() {
   const licenses = archivedData.filter(r => r.type === 'السجلات والرخص').length;
 
   document.getElementById('archiveStatsGrid').innerHTML = `
-    <div class="archive-stat-card"><div class="num">${total}</div><div class="lbl">إجمالي المنتهي القديم</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--blue)">${eqama}</div><div class="lbl">🪪 إقامات منتهية</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--green)">${medical}</div><div class="lbl">🏥 تأمين منتهي</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--orange)">${contracts}</div><div class="lbl">📄 عقود منتهية</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--gray)">${licenses}</div><div class="lbl">📜 رخص منتهية</div></div>
+    <div class="archive-stat-card"><div class="num">${total}</div><div class="lbl">منتهية قديمة جداً</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--blue)">${eqama}</div><div class="lbl">🪪 إقامات متأخرة</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--green)">${medical}</div><div class="lbl">🏥 تأمين متأخر</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--orange)">${contracts}</div><div class="lbl">📄 عقود متأخرة</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--gray)">${licenses}</div><div class="lbl">📜 رخص متأخرة</div></div>
   `;
 }
 
@@ -903,7 +1053,7 @@ function filterArchiveTable() {
   }
 
   if(filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--muted)">🔍 لا توجد وثائق منتهية قديمة تطابق هذا البحث.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--muted)">🔍 لا توجد وثائق منتهية قديمة (تتجاوز 30 يوماً) تطابق البحث.</td></tr>';
     return;
   }
 
@@ -920,7 +1070,6 @@ function filterArchiveTable() {
   `).join('');
 }
 
-// تشغيل النظام تلقائياً عند الفتح
 window.onload = loadData;
 </script>
 </body>
