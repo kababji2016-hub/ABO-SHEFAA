@@ -84,7 +84,6 @@
   .brand-text h1 { font-size: 22px; font-weight: 900; color: #fff; }
   .brand-text p { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
 
-  /* الميزة الجديدة: شريط البحث الشامل في الهيدر */
   .global-search-container {
     flex: 1;
     max-width: 450px;
@@ -137,7 +136,6 @@
 
   .error-banner { background: #FEF3F2; border: 1px solid #FCA5A5; border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; display: none; color: #991B1B; font-size: 14px; font-weight: bold; }
 
-  /* الميزة الجديدة: لوحة مؤشر الأمان العام للمنشأة */
   .safety-score-panel {
     background: linear-gradient(135deg, #ffffff, #f8fafc);
     border-radius: var(--radius);
@@ -208,7 +206,6 @@
   td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
   tr:hover td { background: #f8fafc; }
 
-  /* زر الإشعار الجديد */
   .notify-btn {
     background: #fff;
     border: 1px solid var(--orange);
@@ -242,9 +239,102 @@
   .loading-state { text-align: center; padding: 60px 20px; color: var(--muted); grid-column: 1/-1; }
   .loading-state .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; font-weight: bold; background: #fff; border-radius: var(--radius); }
+
+  /* الأيقونة الجانبية الثابتة الجديدة */
+  .floating-expired-btn {
+    position: fixed;
+    left: 24px;
+    bottom: 24px;
+    z-index: 999;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 24px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(192,57,43,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+  }
+  .floating-expired-btn:hover { transform: scale(1.05); background: #a13024; }
+  .floating-expired-btn .badge-count { background: #fff; color: var(--red); padding: 2px 8px; border-radius: 20px; font-size: 12px; }
+
+  /* النافذة المنبثقة للأرشيف المنتهي */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-box {
+    background: #fff;
+    width: 100%;
+    max-width: 1000px;
+    max-height: 85vh;
+    border-radius: var(--radius);
+    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalSlide 0.3s ease-out;
+  }
+  @keyframes modalSlide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header { padding: 20px; background: #16213E; color: #fff; display: flex; align-items: center; justify-content: space-between; }
+  .modal-header h2 { font-size: 18px; font-weight: 900; }
+  .close-modal { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+  .modal-body { padding: 24px; overflow-y: auto; flex: 1; background: var(--bg); }
+  
+  .archive-stats-mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .archive-stat-card { background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+  .archive-stat-card .num { font-size: 20px; font-weight: 900; color: var(--red); }
+  .archive-stat-card .lbl { font-size: 12px; color: var(--muted); font-weight: 700; margin-top: 2px; }
 </style>
 </head>
 <body>
+
+<button class="floating-expired-btn" onclick="openArchiveModal()">
+  ⚠️ الوثائق المنتهية القديمة 
+  <span class="badge-count" id="floatingBadge">0</span>
+</button>
+
+<div class="modal-overlay" id="archiveModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>🗄️ أرشيف التصفية الخاص بالوثائق المنتهية (قبل الشهر الحالي)</h2>
+      <button class="close-modal" onclick="closeArchiveModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="archive-stats-mini" id="archiveStatsGrid"></div>
+      
+      <div class="search-export-container">
+        <div class="search-box">
+          <input type="text" id="archiveSearch" placeholder="🔍 ابحث في الأرشيف القديم باسم الموظف أو الفرع..." oninput="filterArchiveTable()">
+        </div>
+      </div>
+
+      <div class="full-table" style="margin-bottom:0;">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr><th>#</th><th>الاسم والبيان</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الوضعية والمدة</th><th>إجراء</th></tr>
+            </thead>
+            <tbody id="archiveTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="header">
   <div class="header-inner">
@@ -277,7 +367,7 @@
   <div class="safety-score-panel" id="safetyPanel" style="display:none;">
     <div class="safety-info">
       <div class="safety-title">🛡️ مؤشر الأمان النظامي والتشغيلي لمنشأة كبابجي</div>
-      <div class="safety-desc">يقيس نسبة الاستقرار القانوني وتفادي المخالفات بناءً على مجموع الوثائق السارية والمنتهية.</div>
+      <div class="safety-desc">يقيس نسبة الاستقرار القانوني وتفادي المخالفات (مبني على الوثائق الحالية والمستقبلية فقط).</div>
     </div>
     <div class="score-container">
       <div class="score-bar-bg">
@@ -309,7 +399,10 @@
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbxL-cOnEwoRf1kPJOPmWmJzZGUIMZAwi3zsqBljmsNss3J1tYw-NTDCaczQTzaq6FtQmQ/exec';
 
-let allData = [];
+let rawData = [];       // كل البيانات القادمة من السيرفر
+let allData = [];       // البيانات الحية فقط (المستقبلية + المنتهية في الشهر الحالي)
+let archivedData = [];  // الأرشيف المنتهي القديم (قبل الشهر الحالي)
+
 let activeTab = 'alerts';
 let currentSubFilter = 'all';
 let searchQuery = '';
@@ -317,15 +410,41 @@ let searchQuery = '';
 const TODAY = new Date();
 TODAY.setHours(0,0,0,0);
 
+// دالة لمعرفة هل التاريخ منتهي في شهور سابقة قديمة أم لا
+function isOldExpired(expiryStr, days) {
+  if (days >= 0) return false; // سارية أو تنتهي اليوم
+  try {
+    const expDate = new Date(expiryStr);
+    if (isNaN(expDate.getTime())) return false;
+    // إذا كان المتبقي أقل من 0 والشهر والسنة أقل من الشهر الحالي، فهي قديمة جداً
+    if (expDate.getFullYear() < TODAY.getFullYear()) return true;
+    if (expDate.getFullYear() === TODAY.getFullYear() && expDate.getMonth() < TODAY.getMonth()) return true;
+    return false; // انتهت في نفس الشهر الحالي
+  } catch(e) {
+    return false;
+  }
+}
+
 function loadData() {
   const syncBtn = document.getElementById('syncBtn');
   syncBtn.removeAttribute('onclick');
   document.getElementById('syncIcon').innerHTML = '<span class="spin">⏳</span>';
 
+  // تحديث تاريخ اليوم المعروض
+  document.getElementById('currentDate').textContent = TODAY.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
   fetch(API_URL)
     .then(r => { if(!r.ok) throw new Error("استجابة غير صالحة من خادم جوجل."); return r.json(); })
     .then(data => {
-      allData = data.filter(r => r.name && r.expiry);
+      rawData = data.filter(r => r.name && r.expiry);
+      
+      // الفرز والتقسيم الذكي بناءً على رغبتك
+      allData = rawData.filter(r => !isOldExpired(r.expiry, r.days));
+      archivedData = rawData.filter(r => isOldExpired(r.expiry, r.days));
+
+      // تحديث الأيقونة العائمة
+      document.getElementById('floatingBadge').textContent = archivedData.length;
+
       hideError();
       calculateSafetyScore();
       renderAll();
@@ -339,14 +458,15 @@ function loadData() {
     });
 }
 
-// الميزة المضافة: حساب نقاط الجودة والأمان للنظام
+function showError(msg) { const b = document.getElementById('errorBanner'); b.textContent = msg; b.style.display = 'block'; }
+function hideError() { document.getElementById('errorBanner').style.display = 'none'; }
+
 function calculateSafetyScore() {
   if(!allData.length) return;
-  const expired = allData.filter(r => r.days < 0).length;
+  const expiredInCurrentMonth = allData.filter(r => r.days < 0).length;
   const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
   
-  // خصم نقاط للوثائق المنتهية والحرجة جداً
-  let score = 100 - ((expired * 4) + (critical * 1.5));
+  let score = 100 - ((expiredInCurrentMonth * 4) + (critical * 1.5));
   if(score < 0) score = 0;
   score = Math.round(score);
 
@@ -364,11 +484,9 @@ function calculateSafetyScore() {
   }
 }
 
-// الميزة المضافة: معالج البحث الشامل والذكي العلوي
 function handleGlobalSearch(query) {
   searchQuery = query.trim().toLowerCase();
   if(searchQuery !== "") {
-    // الانتقال تلقائياً لتبويب جرد الوثائق لعرض التصفية الفورية
     activeTab = 'all';
     currentSubFilter = 'all';
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -379,7 +497,6 @@ function handleGlobalSearch(query) {
   if(searchInput) searchInput.value = query;
 }
 
-// الميزة المضافة: توليد ونسخ نص التذكير والمتابعة لـ الواتساب أو الإيميل
 function copyReminder(name, type, days, expiry) {
   let text = "";
   if(days < 0) {
@@ -387,7 +504,7 @@ function copyReminder(name, type, days, expiry) {
   } else if(days === 0) {
     text = `🚨 *إشعار حرج جداً - مطاعم كبابجي* 🚨\n\nتفيد لوحة المؤشرات بأن وثيقة (*${type}*) الخاصة بـ *${name}* *تنتهي اليوم الحالي* (${expiry}).\nيرجى التنسيق السريع لإتمام إجراءات التجديد اليوم.`;
   } else {
-    text = `🔔 *تنبيه متابعة - مطاعم كبابجي* 🔔\n\nيرجى الإحاطة بأن وثيقة (*${type}*) الخاصة بـ *${name}* متبقي على انتهائها ${days} يوم فقط (تاريخ الانتهاء: ${expiry}).\nيرجى تجهيز ومراجعة الأوراق المطلوبة للتجديد تفادياً للدخول في النطاق الحرج.`;
+    text = `🔔 *تنببه متابعة - مطاعم كبابجي* 🔔\n\nيرجى الإحاطة بأن وثيقة (*${type}*) الخاصة بـ *${name}* متبقي على انتهائها ${days} يوم فقط (تاريخ الانتهاء: ${expiry}).\nيرجى تجهيز ومراجعة الأوراق المطلوبة للتجديد تفادياً للدخول في النطاق الحرج.`;
   }
   
   navigator.clipboard.writeText(text).then(() => {
@@ -419,7 +536,7 @@ function docTypeLabel(type) {
 function renderAll() { renderKPIs(); renderTab(activeTab); }
 
 function renderKPIs() {
-  const expired = allData.filter(r => r.days < 0).length;
+  const expired = allData.filter(r => r.days < 0).length; // منتهية في نفس الشهر الحالي فقط
   const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
   const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
   const ok = allData.filter(r => r.days > 30).length;
@@ -428,8 +545,8 @@ function renderKPIs() {
     <div class="kpi-card danger">
       <span class="kpi-icon">🔴</span>
       <div class="kpi-value">${expired}</div>
-      <div class="kpi-label">وثائق منتهية</div>
-      <div class="kpi-sub">تطلب إجراء فوري</div>
+      <div class="kpi-label">منتهية (هذا الشهر)</div>
+      <div class="kpi-sub">تطلب إجراء عاجل</div>
     </div>
     <div class="kpi-card warning">
       <span class="kpi-icon">🟠</span>
@@ -452,8 +569,8 @@ function renderKPIs() {
     <div class="kpi-card total">
       <span class="kpi-icon">📋</span>
       <div class="kpi-value">${allData.length}</div>
-      <div class="kpi-label">إجمالي السجلات</div>
-      <div class="kpi-sub">جميع الملفات الموثقة</div>
+      <div class="kpi-label">الملفات الحالية الموثقة</div>
+      <div class="kpi-sub">باستثناء المنتهي القديم</div>
     </div>
   `;
 }
@@ -473,15 +590,15 @@ function renderTab(tab) {
   if (!allData.length) { el.innerHTML = '<div class="empty-state">لا توجد بيانات محملة حالياً.</div>'; return; }
 
   if (tab === 'alerts') renderAlertsTab(el);
-  else if (tab === 'weekly') renderPeriodTab(el, -999, 7, 'متابعة أسبوعية: الأوراق المنتهية والتي تنتهي خلال 7 أيام');
-  else if (tab === 'monthly') renderPeriodTab(el, -999, 30, 'متابعة شهرية: الأوراق المنتهية والتي تنتهي خلال 30 يوماً');
+  else if (tab === 'weekly') renderPeriodTab(el, -999, 7, 'متابعة أسبوعية: الأوراق الحالية والتي تنتهي خلال 7 أيام');
+  else if (tab === 'monthly') renderPeriodTab(el, -999, 30, 'متابعة شهرية: الأوراق التي تنتهي أو انتهت هذا الشهر خلال 30 يوماً');
   else if (tab === 'all') renderAllDocsTab(el);
   else if (tab === 'branches') renderBranchesTab(el);
 }
 
 function renderAlertsTab(el) {
   const urgent = allData.filter(r => r.days < 30).sort((a,b) => a.days - b.days);
-  let html = `<div class="section-title">⚡ لوحة الإنذارات المبكرة <span class="badge">${urgent.length} إشعار</span></div>`;
+  let html = `<div class="section-title">⚡ لوحة الإنذارات المبكرة الحالية <span class="badge">${urgent.length} إشعار</span></div>`;
   
   const expired = allData.filter(r => r.days < 0).length;
   const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
@@ -526,7 +643,7 @@ function renderAlertsTab(el) {
     `;
   }
 
-  el.innerHTML = html + (tablesHtml || '<div class="empty-state">🎉 ممتاز! جميع الأوراق والوثائق مسجلة وصالحة لفترة مريحة.</div>');
+  el.innerHTML = html + (tablesHtml || '<div class="empty-state">🎉 ممتاز! جميع الأوراق والوثائق الحالية صالحة لفترة مريحة.</div>');
   buildCharts(expired, crit, soon, ok);
 }
 
@@ -562,7 +679,7 @@ function renderPeriodTab(el, minDays, maxDays, title) {
 
 function renderAllDocsTab(el) {
   const filters = [
-    { key: 'all', label: '🗂️ عرض كل الأرشيف' },
+    { key: 'all', label: '🗂️ عرض كل الأرشيف الحي' },
     { key: 'اقامات', label: '🪪 الإقامات' },
     { key: 'التامين الطبي', label: '🏥 التأمين الطبي' },
     { key: 'عقود العمل', label: '📄 عقود العمل' },
@@ -570,7 +687,7 @@ function renderAllDocsTab(el) {
   ];
 
   el.innerHTML = `
-    <div class="section-title">📋 فلترة الأرشيف الكامل والبحث الذكي</div>
+    <div class="section-title">📋 فلترة الأرشيف الحالي والبحث الذكي</div>
     <div class="filter-bar">
       ${filters.map(f => `<button class="filter-btn ${f.key === currentSubFilter ? 'active' : ''}" onclick="applySubFilter('${f.key}', this)">${f.label}</button>`).join('')}
     </div>
@@ -620,7 +737,7 @@ function filterAndDrawTable() {
   filtered.sort((a,b) => a.days - b.days);
 
   if(filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--muted)">🔍 لا توجد نتائج تطابق استعلامك أو شروط البحث الحالية.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--muted)">🔍 لا توجد نتائج تطابق استعلامك في الأرشيف الفعال.</td></tr>';
     return;
   }
 
@@ -639,7 +756,7 @@ function filterAndDrawTable() {
 
 function renderBranchesTab(el) {
   const branches = [...new Set(allData.map(r => r.branch))].sort();
-  let html = '<div class="section-title">🏪 تحليل وتوزيع المسؤوليات النظامية حسب الفرع</div>';
+  let html = '<div class="section-title">🏪 تحليل وتوزيع المسؤوليات النظامية حسب الفرع (للوثائق الحالية)</div>';
   
   html += '<div class="branch-overview">';
   branches.forEach(b => {
@@ -670,7 +787,7 @@ function renderBranchesTab(el) {
         <div class="panel-header">
           <h3>🏪 إدارة / فرع: ${b}</h3>
           <span style="font-size:12px; font-weight:bold;">
-            قوام الفرع: ${bItems.length} وثيقة ${dangerCount > 0 ? ` — (<span style="color:var(--red)">${dangerCount} مستحقة المراجعة</span>)` : ''}
+            قوام الفرع الحالي: ${bItems.length} وثيقة ${dangerCount > 0 ? ` — (<span style="color:var(--red)">${dangerCount} مستحقة المراجعة</span>)` : ''}
           </span>
         </div>
         <div class="table-wrapper">
@@ -704,7 +821,7 @@ function buildCharts(expired, crit, soon, ok) {
     new Chart(canvas1, {
       type: 'doughnut',
       data: {
-        labels: ['منتهية', 'عاجلة (<=14 يوم)', 'قريبة (<=30 يوم)', 'سارية'],
+        labels: ['منتهية (هذا الشهر)', 'عاجلة (<=14 يوم)', 'قريبة (<=30 يوم)', 'سارية'],
         datasets: [{ data: [expired, crit, soon, ok], backgroundColor: ['#C0392B','#D35400','#D4AC0D','#1E8449'], borderWidth: 0 }]
       },
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { family: 'Tajawal', size: 11 } } } } }
@@ -738,19 +855,73 @@ function exportTableToCSV() {
   let csvContent = "\uFEFF"; 
   csvContent += "م,الاسم_البيان,الفرع,النوع,تاريخ_الانتهاء,الأيام_المتبقية\n";
   filtered.forEach((r, i) => { csvContent += `${i+1},"${r.name}","${r.branch}","${docTypeLabel(r.type)}","${r.expiry}",${r.days}\n`; });
-
+  
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.setAttribute("href", URL.createObjectURL(blob));
-  link.setAttribute("download", `تقرير_متابعة_كبابجي_${new Date().toISOString().slice(0,10)}.csv`);
-  document.body.appendChild(link); link.click(); document.body.removeChild(link);
+  link.setAttribute("href", url);
+  link.setAttribute("download", `جرد_وثائق_كبابجي_الحية_${new Date().toISOString().slice(0,10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
-function showError(msg) { const el = document.getElementById('errorBanner'); el.textContent = '⚠️ ' + msg; el.style.display = 'block'; }
-function hideError() { const el = document.getElementById('errorBanner'); if(el) el.style.display = 'none'; }
+/* وظائف الأيقونة الجانبية والأرشيف الجديد بالكامل */
+function openArchiveModal() {
+  document.getElementById('archiveModal').style.display = 'flex';
+  renderArchiveMiniStats();
+  filterArchiveTable();
+}
 
-window.addEventListener('DOMContentLoaded', loadData);
+function closeArchiveModal() {
+  document.getElementById('archiveModal').style.display = 'none';
+}
+
+function renderArchiveMiniStats() {
+  const total = archivedData.length;
+  const eqama = archivedData.filter(r => r.type === 'اقامات').length;
+  const medical = archivedData.filter(r => r.type === 'التامين الطبي').length;
+  const contracts = archivedData.filter(r => r.type === 'عقود العمل').length;
+  const licenses = archivedData.filter(r => r.type === 'السجلات والرخص').length;
+
+  document.getElementById('archiveStatsGrid').innerHTML = `
+    <div class="archive-stat-card"><div class="num">${total}</div><div class="lbl">إجمالي المنتهي القديم</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--blue)">${eqama}</div><div class="lbl">🪪 إقامات منتهية</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--green)">${medical}</div><div class="lbl">🏥 تأمين منتهي</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--orange)">${contracts}</div><div class="lbl">📄 عقود منتهية</div></div>
+    <div class="archive-stat-card"><div class="num" style="color:var(--gray)">${licenses}</div><div class="lbl">📜 رخص منتهية</div></div>
+  `;
+}
+
+function filterArchiveTable() {
+  const q = document.getElementById('archiveSearch').value.trim().toLowerCase();
+  const tbody = document.getElementById('archiveTableBody');
+  
+  let filtered = archivedData;
+  if(q) {
+    filtered = archivedData.filter(r => r.name.toLowerCase().includes(q) || r.branch.toLowerCase().includes(q));
+  }
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--muted)">🔍 لا توجد وثائق منتهية قديمة تطابق هذا البحث.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((r, i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td><strong>${r.name}</strong></td>
+      <td><span class="branch-tag">${r.branch}</span></td>
+      <td>${docTypeLabel(r.type)}</td>
+      <td><code style="color:var(--red); font-weight:bold;">${r.expiry}</code></td>
+      <td><span class="status-pill expired">منتهية منذ ${Math.abs(r.days)} يوم 🔴</span></td>
+      <td><button class="notify-btn" onclick="copyReminder('${r.name}', '${docTypeLabel(r.type)}', ${r.days}, '${r.expiry}')">📋 خطاب تجديد</button></td>
+    </tr>
+  `).join('');
+}
+
+// تشغيل النظام تلقائياً عند الفتح
+window.onload = loadData;
 </script>
-
 </body>
 </html>
