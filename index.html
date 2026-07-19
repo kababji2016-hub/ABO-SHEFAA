@@ -4,175 +4,55 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>كبابجي - النظام الذكي لإدارة ومتابعة الوثائق</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght=400;500;700;900&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-
 <style>
   :root {
-    --red: #C0392B;
-    --red-light: #FADBD8;
-    --orange: #D35400;
-    --orange-light: #FAE5D3;
-    --yellow: #D4AC0D;
-    --yellow-light: #FEF9E7;
-    --green: #1E8449;
-    --green-light: #D5F5E3;
-    --blue: #1A5276;
-    --blue-light: #D6EAF8;
-    --gray: #5D6D7E;
-    --gray-light: #EAF0FB;
-    --bg: #F4F6FA;
-    --card: #fff;
-    --text: #1a202c;
-    --muted: #64748b;
-    --border: #e2e8f0;
-    --radius: 14px;
-    --shadow: 0 4px 14px rgba(0,0,0,0.06);
+    --red: #C0392B; --red-light: #FADBD8;
+    --orange: #D35400; --orange-light: #FAE5D3;
+    --yellow: #D4AC0D; --yellow-light: #FEF9E7;
+    --green: #1E8449; --green-light: #D5F5E3;
+    --blue: #1A5276; --blue-light: #D6EAF8;
+    --gray: #5D6D7E; --gray-light: #EAF0FB;
+    --bg: #F4F6FA; --card: #fff; --text: #1a202c;
+    --muted: #64748b; --border: #e2e8f0;
+    --radius: 14px; --shadow: 0 4px 14px rgba(0,0,0,0.06);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; direction: rtl; }
 
-  body {
-    font-family: 'Tajawal', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    direction: rtl;
-  }
-
-  .header {
-    background: linear-gradient(135deg, #1A1A2E 0%, #16213E 60%, #0F3460 100%);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-  }
-
-  .header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  .logo-circle {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #E74C3C, #C0392B);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    box-shadow: 0 4px 12px rgba(231,76,60,0.35);
-  }
-
+  .header { background: linear-gradient(135deg, #1A1A2E 0%, #16213E 60%, #0F3460 100%); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+  .header-inner { max-width: 1400px; margin: 0 auto; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .header-brand { display: flex; align-items: center; gap: 14px; }
+  .logo-circle { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #E74C3C, #C0392B); display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(231,76,60,0.35); }
   .brand-text h1 { font-size: 22px; font-weight: 900; color: #fff; }
   .brand-text p { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
-
-  .global-search-container {
-    flex: 1;
-    max-width: 400px;
-    min-width: 240px;
-  }
-  .global-search-input {
-    width: 100%;
-    padding: 10px 18px;
-    border-radius: 30px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 13.5px;
-    outline: none;
-    transition: all 0.3s;
-  }
-  .global-search-input:focus {
-    background: #fff;
-    color: var(--text);
-    border-color: #fff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
+  .global-search-container { flex: 1; max-width: 400px; min-width: 240px; }
+  .global-search-input { width: 100%; padding: 10px 18px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-family: 'Tajawal', sans-serif; font-size: 13.5px; outline: none; transition: all 0.3s; }
+  .global-search-input:focus { background: #fff; color: var(--text); border-color: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
   .global-search-input::placeholder { color: rgba(255,255,255,0.5); }
-
-  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .date-badge { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 12px; font-weight: 500; }
   .manager-badge { background: linear-gradient(135deg, #E74C3C, #C0392B); border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 12px; font-weight: 700; }
-
-  .test-sound-btn {
-    background: linear-gradient(135deg, #D35400, #E67E22);
-    border: none;
-    border-radius: 8px;
-    padding: 8px 14px;
-    color: #fff;
-    font-size: 12px;
-    font-family: 'Tajawal', sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 700;
-    transition: all 0.2s;
-    box-shadow: 0 4px 10px rgba(211, 84, 0, 0.3);
-  }
-  .test-sound-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(211, 84, 0, 0.4); }
-
-  .sync-btn {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 8px;
-    padding: 8px 14px;
-    color: #fff;
-    font-size: 12px;
-    font-family: 'Tajawal', sans-serif;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s;
-    font-weight: 600;
-  }
+  .test-sound-btn { background: linear-gradient(135deg, #D35400, #E67E22); border: none; border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 12px; font-family: 'Tajawal', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 700; transition: all 0.2s; }
+  .test-sound-btn:hover { transform: translateY(-1px); }
+  .sync-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px 14px; color: #fff; font-size: 12px; font-family: 'Tajawal', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; font-weight: 600; }
   .sync-btn:hover { background: rgba(255,255,255,0.25); }
   .spin { animation: spin 1s linear infinite; display: inline-block; }
   @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
 
   .main { max-width: 1400px; margin: 0 auto; padding: 28px 24px 60px; }
-
   .error-banner { background: #FEF3F2; border: 1px solid #FCA5A5; border-radius: var(--radius); padding: 16px 20px; margin-bottom: 24px; display: none; color: #991B1B; font-size: 14px; font-weight: bold; }
 
-  .safety-score-panel {
-    background: linear-gradient(135deg, #ffffff, #f8fafc);
-    border-radius: var(--radius);
-    padding: 20px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
+  .safety-score-panel { background: linear-gradient(135deg, #fff, #f8fafc); border-radius: var(--radius); padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow); border: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .safety-info { display: flex; flex-direction: column; gap: 4px; }
   .safety-title { font-size: 16px; font-weight: 800; color: #16213E; display: flex; align-items: center; gap: 6px; }
   .safety-desc { font-size: 12.5px; color: var(--muted); }
   .score-container { display: flex; align-items: center; gap: 12px; }
-  .score-bar-bg { width: 200px; height: 14px; background: #e2e8f0; border-radius: 10px; overflow: hidden; position: relative; }
-  .score-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--red), var(--green)); transition: width 0.8s ease-in-out; }
+  .score-bar-bg { width: 200px; height: 14px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+  .score-bar-fill { height: 100%; width: 0%; transition: width 0.8s ease-in-out; }
   .score-text { font-size: 22px; font-weight: 900; color: var(--green); min-width: 60px; text-align: left; }
 
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 28px; }
@@ -217,34 +97,21 @@
   .full-table { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; margin-bottom: 24px; }
   .panel-header { padding: 14px 20px; border-bottom: 1px solid var(--border); background: #f8fafc; display: flex; align-items: center; justify-content: space-between; }
   .panel-header h3 { font-size: 14px; font-weight: 700; color: #16213E; }
-
   .table-wrapper { width: 100%; overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: right; }
   th { background: #f1f5f9; padding: 12px 16px; font-weight: 700; color: #475569; border-bottom: 1px solid var(--border); }
   td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
   tr:hover td { background: #f8fafc; }
 
-  .notify-btn {
-    background: #fff;
-    border: 1px solid var(--orange);
-    color: var(--orange);
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-size: 11px;
-    font-weight: 700;
-    cursor: pointer;
-    font-family: 'Tajawal', sans-serif;
-    transition: all 0.2s;
-  }
+  .notify-btn { background: #fff; border: 1px solid var(--orange); color: var(--orange); border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; transition: all 0.2s; }
   .notify-btn:hover { background: var(--orange); color: #fff; }
-
   .status-pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 700; }
   .status-pill.expired { background: var(--red-light); color: var(--red); }
   .status-pill.critical { background: var(--orange-light); color: var(--orange); }
   .status-pill.soon { background: var(--yellow-light); color: var(--yellow); }
   .status-pill.ok { background: var(--green-light); color: var(--green); }
-
   .branch-tag { background: var(--gray-light); color: var(--gray); border-radius: 6px; padding: 4px 8px; font-size: 11.5px; font-weight: 700; }
+
   .branch-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
   .branch-card { background: var(--card); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); text-align: center; }
   .branch-card .b-name { font-size: 14px; font-weight: 900; color: #16213E; margin-bottom: 10px; }
@@ -258,91 +125,46 @@
   .loading-state .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; font-weight: bold; background: #fff; border-radius: var(--radius); }
 
-  .floating-expired-btn {
-    position: fixed;
-    left: 24px;
-    bottom: 24px;
-    z-index: 999;
-    background: var(--red);
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 24px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 14px;
-    font-weight: 900;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(192,57,43,0.4);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-  }
-  .floating-expired-btn:hover { transform: scale(1.05); background: #a13024; }
-  .floating-expired-btn .badge-count { background: #fff; color: var(--red); padding: 2px 8px; border-radius: 20px; font-size: 12px; }
+  /* ── إدارة الوثائق ──────────────────────────────────── */
+  .manage-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+  .add-btn { background: linear-gradient(135deg, #1E8449, #27AE60); color: #fff; border: none; border-radius: 10px; padding: 12px 22px; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(30,132,73,0.3); transition: all 0.2s; }
+  .add-btn:hover { transform: translateY(-2px); }
+  .edit-btn { background: #EBF5FB; border: 1px solid #1A5276; color: #1A5276; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; transition: all 0.2s; }
+  .edit-btn:hover { background: #1A5276; color: #fff; }
+  .del-btn { background: #FDEDEC; border: 1px solid var(--red); color: var(--red); border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; transition: all 0.2s; }
+  .del-btn:hover { background: var(--red); color: #fff; }
 
-  .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 1000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-box {
-    background: #fff;
-    width: 100%;
-    max-width: 1000px;
-    max-height: 85vh;
-    border-radius: var(--radius);
-    box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    animation: modalSlide 0.3s ease-out;
-  }
+  /* ── موديل النموذج ──────────────────────────────────── */
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-box { background: #fff; width: 100%; max-width: 1000px; max-height: 85vh; border-radius: var(--radius); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; animation: modalSlide 0.3s ease-out; }
+  .form-modal-box { background: #fff; width: 100%; max-width: 520px; border-radius: var(--radius); box-shadow: 0 20px 40px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; animation: modalSlide 0.3s ease-out; }
   @keyframes modalSlide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   .modal-header { padding: 20px; background: #16213E; color: #fff; display: flex; align-items: center; justify-content: space-between; }
   .modal-header h2 { font-size: 18px; font-weight: 900; }
   .close-modal { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
   .modal-body { padding: 24px; overflow-y: auto; flex: 1; background: var(--bg); }
-  
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; }
+  .form-control { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 9px; font-family: 'Tajawal', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color 0.2s; background: #fff; }
+  .form-control:focus { border-color: #1A5276; }
+  .form-control:disabled { background: #f1f5f9; color: var(--muted); }
+  .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .btn-save { background: #1E8449; color: #fff; border: none; border-radius: 9px; padding: 11px 24px; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-save:hover { background: #196F3D; }
+  .btn-save:disabled { opacity: 0.6; cursor: wait; }
+  .btn-cancel { background: #f1f5f9; color: #64748b; border: none; border-radius: 9px; padding: 11px 20px; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+
   .archive-stats-mini { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
   .archive-stat-card { background: #fff; padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
   .archive-stat-card .num { font-size: 20px; font-weight: 900; color: var(--red); }
   .archive-stat-card .lbl { font-size: 12px; color: var(--muted); font-weight: 700; margin-top: 2px; }
 
-  /* 🔔 نظام الإشعارات الثابتة والمعدلة */
-  #toastContainer {
-    position: fixed;
-    top: 85px;
-    right: 24px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 350px;
-    pointer-events: none;
-  }
-  .toast {
-    background: #fff;
-    color: var(--text);
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.16);
-    border-right: 6px solid var(--blue);
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    pointer-events: auto;
-    animation: toastIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    transition: all 0.3s ease;
-    border: 1px solid var(--border);
-    border-right-width: 6px;
-  }
+  .floating-expired-btn { position: fixed; left: 24px; bottom: 24px; z-index: 999; background: var(--red); color: #fff; border: none; border-radius: 50px; padding: 14px 24px; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 0 8px 24px rgba(192,57,43,0.4); display: flex; align-items: center; gap: 8px; transition: all 0.3s; }
+  .floating-expired-btn:hover { transform: scale(1.05); background: #a13024; }
+  .floating-expired-btn .badge-count { background: #fff; color: var(--red); padding: 2px 8px; border-radius: 20px; font-size: 12px; }
+
+  #toastContainer { position: fixed; top: 85px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 12px; width: 350px; pointer-events: none; }
+  .toast { background: #fff; color: var(--text); padding: 16px; border-radius: 12px; box-shadow: 0 12px 30px rgba(0,0,0,0.16); border-right: 6px solid var(--blue); display: flex; align-items: flex-start; gap: 14px; pointer-events: auto; animation: toastIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); transition: all 0.3s ease; border: 1px solid var(--border); border-right-width: 6px; }
   @keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
   .toast.fade-out { transform: translateX(120%); opacity: 0; }
   .toast-icon { font-size: 24px; }
@@ -351,26 +173,43 @@
   .toast-desc { font-size: 12.5px; color: #334155; line-height: 1.5; font-weight: 500; }
   .toast-close { background: #f1f5f9; border: none; font-size: 18px; cursor: pointer; color: #64748b; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
   .toast-close:hover { background: var(--red-light); color: var(--red); }
-  
   .toast.success { border-right-color: var(--green); }
   .toast.warning { border-right-color: var(--orange); }
   .toast.error { border-right-color: var(--red); animation: toastPulse 2s infinite ease-in-out, toastIn 0.3s; }
-  
-  @keyframes toastPulse {
-    0%, 100% { box-shadow: 0 12px 30px rgba(192,57,43,0.15); }
-    50% { box-shadow: 0 12px 35px rgba(192,57,43,0.4); border-color: rgba(192,57,43,0.3); border-right-color: var(--red); }
-  }
+  @keyframes toastPulse { 0%, 100% { box-shadow: 0 12px 30px rgba(192,57,43,0.15); } 50% { box-shadow: 0 12px 35px rgba(192,57,43,0.4); } }
+
+  /* ── المهام ─────────────────────────────────────────────── */
+  .tasks-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .task-kpi-card { background: #fff; border-radius: 10px; padding: 14px; border: 1px solid var(--border); text-align: center; box-shadow: var(--shadow); }
+  .task-kpi-card .num { font-size: 28px; font-weight: 900; }
+  .task-kpi-card .lbl { font-size: 12px; color: var(--muted); font-weight: 700; margin-top: 4px; }
+  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  .task-card { background: #fff; border-radius: 10px; border: 1px solid var(--border); padding: 14px 18px; display: flex; align-items: center; gap: 14px; border-right: 4px solid var(--gray); box-shadow: var(--shadow); }
+  .task-card.overdue { border-right-color: var(--red); background: #FEF3F2; }
+  .task-card.today   { border-right-color: var(--orange); background: #FFF3E0; }
+  .task-card.future  { border-right-color: var(--blue); }
+  .task-info { flex: 1; }
+  .task-name { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .task-date-label { font-size: 12px; color: var(--muted); }
+  .task-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .done-btn { background: var(--green-light); border: 1px solid var(--green); color: var(--green); border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; transition: all 0.2s; }
+  .done-btn:hover { background: var(--green); color: #fff; }
+  .postpone-btn { background: var(--yellow-light); border: 1px solid var(--yellow); color: #7D6608; border-radius: 6px; padding: 5px 12px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; transition: all 0.2s; }
+  .postpone-btn:hover { background: var(--yellow); color: #fff; }
+  .task-section-title { font-size: 14px; font-weight: 800; color: var(--text); margin: 16px 0 10px; display: flex; align-items: center; gap: 8px; }
 </style>
 </head>
 <body>
 
 <div id="toastContainer"></div>
 
+<!-- زر الأرشيف القديم -->
 <button class="floating-expired-btn" onclick="openArchiveModal()">
-  ⚠️ المنتهية قديمة (> 30 يوم) 
+  ⚠️ المنتهية قديمة (&gt; 30 يوم)
   <span class="badge-count" id="floatingBadge">0</span>
 </button>
 
+<!-- موديل الأرشيف -->
 <div class="modal-overlay" id="archiveModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -379,19 +218,15 @@
     </div>
     <div class="modal-body">
       <div class="archive-stats-mini" id="archiveStatsGrid"></div>
-      
       <div class="search-export-container">
         <div class="search-box">
-          <input type="text" id="archiveSearch" placeholder="🔍 ابحث في الأرشيف القديم باسم الموظف، البيان أو الفرع..." oninput="filterArchiveTable()">
+          <input type="text" id="archiveSearch" placeholder="🔍 ابحث في الأرشيف..." oninput="filterArchiveTable()">
         </div>
       </div>
-
-      <div class="full-table" style="margin-bottom:0;">
+      <div class="full-table" style="margin-bottom:0">
         <div class="table-wrapper">
           <table>
-            <thead>
-              <tr><th>#</th><th>الاسم والبيان</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة والمدة الفائتة</th><th>إجراء</th></tr>
-            </thead>
+            <thead><tr><th>#</th><th>الاسم والبيان</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة</th><th>إجراء</th></tr></thead>
             <tbody id="archiveTableBody"></tbody>
           </table>
         </div>
@@ -400,6 +235,72 @@
   </div>
 </div>
 
+<!-- موديل إضافة / تعديل وثيقة -->
+<div class="modal-overlay" id="docFormModal">
+  <div class="form-modal-box">
+    <div class="modal-header">
+      <h2 id="formModalTitle">➕ إضافة وثيقة جديدة</h2>
+      <button class="close-modal" onclick="closeDocModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="formRowNum">
+      <input type="hidden" id="formMode">
+      <div class="form-group">
+        <label>نوع الوثيقة</label>
+        <select class="form-control" id="formType">
+          <option value="اقامات">🪪 إقامة</option>
+          <option value="التامين الطبي">🏥 تأمين طبي</option>
+          <option value="عقود العمل">📄 عقد عمل</option>
+          <option value="السجلات والرخص">📜 سجل / رخصة</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>اسم الموظف / الوثيقة</label>
+        <input type="text" class="form-control" id="formName" placeholder="أدخل الاسم الكامل...">
+      </div>
+      <div class="form-group">
+        <label>الفرع</label>
+        <input type="text" class="form-control" id="formBranch" list="branchesList" placeholder="اسم الفرع...">
+        <datalist id="branchesList"></datalist>
+      </div>
+      <div class="form-group">
+        <label>تاريخ انتهاء الوثيقة</label>
+        <input type="date" class="form-control" id="formExpiry">
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeDocModal()">إلغاء</button>
+        <button class="btn-save" id="btnSave" onclick="saveDoc()">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- موديل إضافة مهمة -->
+<div class="modal-overlay" id="taskFormModal">
+  <div class="form-modal-box">
+    <div class="modal-header">
+      <h2 id="taskModalTitle">➕ إضافة مهمة جديدة</h2>
+      <button class="close-modal" onclick="closeTaskModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="taskRowNum">
+      <div class="form-group">
+        <label>اسم المهمة</label>
+        <input type="text" class="form-control" id="taskName" placeholder="اكتب وصف المهمة...">
+      </div>
+      <div class="form-group">
+        <label>تاريخ الإنجاز</label>
+        <input type="date" class="form-control" id="taskDate">
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeTaskModal()">إلغاء</button>
+        <button class="btn-save" id="btnSaveTask" onclick="saveTask()">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- الهيدر -->
 <div class="header">
   <div class="header-inner">
     <div class="header-brand">
@@ -409,20 +310,13 @@
         <p>النظام الذكي لإدارة ومتابعة الوثائق</p>
       </div>
     </div>
-    
     <div class="global-search-container">
       <input type="text" class="global-search-input" id="globalSearch" placeholder="🔍 بحث شامل فوري عن موظف أو رخصة..." oninput="handleGlobalSearch(this.value)">
     </div>
-
     <div class="header-right">
       <div class="date-badge" id="currentDate">—</div>
       <div class="manager-badge">👤 أبو شفاء</div>
-      
-      <!-- 📢 زر تجربة نظام الإشعارات الصوتي المطور والقوي -->
-      <button class="test-sound-btn" onclick="triggerSystemTestNotification()">
-        🚨 تجربة إنذار مستمر وقوي
-      </button>
-
+      <button class="test-sound-btn" onclick="triggerSystemTestNotification()">🚨 تجربة إنذار</button>
       <button class="sync-btn" id="syncBtn" onclick="loadData()">
         <span id="syncIcon">🔄</span> تحديث البيانات
       </button>
@@ -431,18 +325,15 @@
 </div>
 
 <div class="main">
-
   <div class="error-banner" id="errorBanner"></div>
 
-  <div class="safety-score-panel" id="safetyPanel" style="display:none;">
+  <div class="safety-score-panel" id="safetyPanel" style="display:none">
     <div class="safety-info">
-      <div class="safety-title">🛡️ مؤشر الأمان النظامي والتشغيلي لمنشأة كبابجي</div>
-      <div class="safety-desc">يقيس استقرار السجلات الحالية ومتابعة الأوراق القريبة (يستبعد المنتهي قديماً قبل 30 يوماً).</div>
+      <div class="safety-title">🛡️ مؤشر الأمان النظامي والتشغيلي</div>
+      <div class="safety-desc">يقيس استقرار السجلات الحالية (يستبعد المنتهي قديماً قبل 30 يوماً).</div>
     </div>
     <div class="score-container">
-      <div class="score-bar-bg">
-        <div class="score-bar-fill" id="scoreBar"></div>
-      </div>
+      <div class="score-bar-bg"><div class="score-bar-fill" id="scoreBar"></div></div>
       <div class="score-text" id="scoreText">0%</div>
     </div>
   </div>
@@ -450,176 +341,112 @@
   <div class="kpi-grid" id="kpiGrid">
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>جاري سحب وفحص سجلات المنشأة وتحديث المؤشرات...</p>
+      <p>جاري سحب وفحص سجلات المنشأة...</p>
     </div>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" id="tab-alerts" onclick="switchTab('alerts')">🔔 التنبيهات العاجلة</button>
-    <button class="tab-btn" id="tab-weekly" onclick="switchTab('weekly')">📅 تنتهي هذا الأسبوع</button>
-    <button class="tab-btn" id="tab-monthly" onclick="switchTab('monthly')">📆 تنتهي هذا الشهر / منتهية جديداً</button>
-    <button class="tab-btn" id="tab-all" onclick="switchTab('all')">📋 جرد الوثائق والتصفية</button>
-    <button class="tab-btn" id="tab-branches" onclick="switchTab('branches')">🏪 الفروع والمسؤوليات</button>
+    <button class="tab-btn active" id="tab-alerts"   onclick="switchTab('alerts')">🔔 التنبيهات العاجلة</button>
+    <button class="tab-btn"        id="tab-weekly"   onclick="switchTab('weekly')">📅 هذا الأسبوع</button>
+    <button class="tab-btn"        id="tab-monthly"  onclick="switchTab('monthly')">📆 هذا الشهر</button>
+    <button class="tab-btn"        id="tab-all"      onclick="switchTab('all')">📋 جرد الوثائق</button>
+    <button class="tab-btn"        id="tab-branches" onclick="switchTab('branches')">🏪 الفروع</button>
+    <button class="tab-btn"        id="tab-manage"   onclick="switchTab('manage')">⚙️ إدارة الوثائق</button>
+    <button class="tab-btn"        id="tab-tasks"    onclick="switchTab('tasks')">📝 المهام</button>
   </div>
 
   <div id="tabContent"></div>
-
 </div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxL-cOnEwoRf1kPJOPmWmJzZGUIMZAwi3zsqBljmsNss3J1tYw-NTDCaczQTzaq6FtQmQ/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbzbS_8hiYMRqpksyh1QjRQeZe4hAuWnNYUsKSFmRCL7zPeEDwOggSyv6Hb-nfYX9F83/exec';
 
-let rawData = [];       
-let allData = [];       
-let archivedData = [];  
-
+let rawData = [];
+let allData = [];
+let archivedData = [];
 let activeTab = 'alerts';
 let currentSubFilter = 'all';
 let searchQuery = '';
+let manageTypeFilter = 'all';
+let manageTableData = [];
 
-const TODAY = new Date();
-TODAY.setHours(0,0,0,0);
+const REMINDER_HOURS = 2;
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
 
-// 🔁 ضبط وقت إعادة التنبيه التلقائي بالساعات (مثلاً: كل ساعتين)
-const REMINDER_HOURS = 2; 
-
-// 🎵 هندسة صوت إنذار ترددي قوي وممتد (Siren Tone) لضمان الانتباه الكامل
+// ── صوت ─────────────────────────────────────────────────
 function playNotificationSound(type = 'default') {
   try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
     const ctx = new AudioContext();
-    
     if (type === 'warning' || type === 'error') {
-      // إنذار ممتد وقوي يتأرجح التردد فيه لجذب الانتباه (صوت سيارة إسعاف/طوارئ مكرر)
-      let time = ctx.currentTime;
-      for (let i = 0; i < 4; i++) {
-        playTone(ctx, 600, 0.15, time);
-        playTone(ctx, 450, 0.15, time + 0.15);
-        time += 0.3;
-      }
-    } else {
-      // نغمة نجاح أو إشعار عادي ناعمة ولكن مسموعة
-      playTone(ctx, 523.25, 0.12, 0);     
-      playTone(ctx, 783.99, 0.18, 0.1);    
-    }
-  } catch (e) {
-    console.log("المتصفح يحتاج لتفاعل مسبق لتشغيل النغمات.");
-  }
+      let t = ctx.currentTime;
+      for (let i = 0; i < 4; i++) { playTone(ctx,600,0.15,t); playTone(ctx,450,0.15,t+0.15); t+=0.3; }
+    } else { playTone(ctx,523.25,0.12,0); playTone(ctx,783.99,0.18,0.1); }
+  } catch(e) {}
+}
+function playTone(ctx, freq, duration, offset) {
+  const osc = ctx.createOscillator(); const g = ctx.createGain();
+  osc.type = 'sawtooth'; osc.frequency.setValueAtTime(freq, ctx.currentTime + offset);
+  g.gain.setValueAtTime(0.25, ctx.currentTime + offset);
+  g.gain.linearRampToValueAtTime(0.001, ctx.currentTime + offset + duration);
+  osc.connect(g); g.connect(ctx.destination);
+  osc.start(ctx.currentTime + offset); osc.stop(ctx.currentTime + offset + duration);
 }
 
-function playTone(ctx, freq, duration, startTimeOffset) {
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  
-  osc.type = 'sawtooth'; // استخدام موجة مسننة لتعطي صوتاً حاداً ونفاذاً يسهل سماعه
-  osc.frequency.setValueAtTime(freq, ctx.currentTime + startTimeOffset);
-  
-  gain.gain.setValueAtTime(0.25, ctx.currentTime + startTimeOffset); // رفع درجة الصوت لتصبح أقوى
-  gain.gain.linearRampToValueAtTime(0.001, ctx.currentTime + startTimeOffset + duration);
-  
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-  
-  osc.start(ctx.currentTime + startTimeOffset);
-  osc.stop(ctx.currentTime + startTimeOffset + duration);
-}
-
-// 🔔 دالة إطلاق الإشعارات الثابتة التي لا تختفي إلا يدويًا
+// ── إشعارات ──────────────────────────────────────────────
 function showToast(title, desc, type = 'default') {
-  const container = document.getElementById('toastContainer');
-  if (!container) return;
-
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  
+  const c = document.getElementById('toastContainer');
+  if (!c) return;
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
   let icon = '🔔';
   if (type === 'success') icon = '✅';
   if (type === 'warning') icon = '🟠';
   if (type === 'error') icon = '🚨';
-
-  toast.innerHTML = `
-    <div class="toast-icon">${icon}</div>
-    <div class="toast-content">
-      <div class="toast-title">${title}</div>
-      <div class="toast-desc">${desc}</div>
-    </div>
-    <button class="toast-close" onclick="this.parentElement.remove()">&times;</button>
-  `;
-
-  container.appendChild(toast);
-  
-  // تفعيل الصوت القوي فوراً
+  t.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-content"><div class="toast-title">${title}</div><div class="toast-desc">${desc}</div></div><button class="toast-close" onclick="this.parentElement.remove()">&times;</button>`;
+  c.appendChild(t);
   playNotificationSound(type);
 }
-
-// 🎯 زر الفحص والتجربة الفورية للصوت والإنذار الثابت
 function triggerSystemTestNotification() {
-  showToast(
-    '🚨 فحص الإنذار القوي والجهوزية',
-    'هذا الإشعار سيبقى ثابتاً على شاشتك ولن يختفي حتى تقوم بإغلاقه بنفسك. تم تفعيل نغمة الطوارئ الترددية بنجاح!',
-    'error'
-  );
+  showToast('🚨 فحص الإنذار', 'هذا الإشعار ثابت حتى تغلقه بنفسك.', 'error');
 }
 
-// ⏱️ فحص آلي ودوري لإعادة التنبيه كل عدد ساعات محدد
-function startAutomatedReminderSystem() {
-  setInterval(() => {
-    const expiredCount = allData.filter(r => r.days < 0).length;
-    const criticalCount = allData.filter(r => r.days >= 0 && r.days <= 14).length;
-
-    if (expiredCount > 0 || criticalCount > 0) {
-      showToast(
-        '🚨 تذكير دوري بالنطاق الحرج',
-        `تنبيه مكرر: لا تزال هناك ${expiredCount} وثائق منتهية و ${criticalCount} وثائق حرجة تحتاج إلى اتخاذ إجراء تجديد فوري.`,
-        'error'
-      );
-    }
-  }, REMINDER_HOURS * 60 * 60 * 1000); // تحويل الساعات المحددة إلى ميلي ثانية
-}
-
+// ── تحميل البيانات ───────────────────────────────────────
 function loadData() {
-  const syncBtn = document.getElementById('syncBtn');
-  syncBtn.removeAttribute('onclick');
+  const btn = document.getElementById('syncBtn');
+  btn.removeAttribute('onclick');
   document.getElementById('syncIcon').innerHTML = '<span class="spin">⏳</span>';
+  document.getElementById('currentDate').textContent = TODAY.toLocaleDateString('ar-EG', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-  document.getElementById('currentDate').textContent = TODAY.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const url = new URL(API_URL);
+  url.searchParams.set('t', Date.now());
 
-  fetch(API_URL)
-    .then(r => { if(!r.ok) throw new Error("استجابة غير صالحة من خادم جوجل."); return r.json(); })
+  fetch(url.toString())
+    .then(r => { if(!r.ok) throw new Error('استجابة غير صالحة'); return r.json(); })
     .then(data => {
       rawData = data.filter(r => r.name && r.expiry);
-      
       allData = rawData.filter(r => r.days >= -30);
       archivedData = rawData.filter(r => r.days < -30);
-
       document.getElementById('floatingBadge').textContent = archivedData.length;
-
       hideError();
       calculateSafetyScore();
       renderAll();
-      
-      const expiredCount = allData.filter(r => r.days < 0).length;
-      const criticalCount = allData.filter(r => r.days >= 0 && r.days <= 14).length;
-
-      if (expiredCount > 0 || criticalCount > 0) {
-        showToast(
-          '🚨 كشف السجلات الحرج',
-          `تنبيه نظامي: تم رصد ${expiredCount} وثائق منتهية حالياً و ${criticalCount} وثائق تحت النطاق الحرج جداً (أقل من 14 يوم).`,
-          'error'
-        );
+      const exp = allData.filter(r => r.days < 0).length;
+      const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
+      if (exp > 0 || crit > 0) {
+        showToast('🚨 كشف السجلات الحرج', `${exp} وثيقة منتهية و${crit} وثيقة حرجة.`, 'error');
       } else {
-        showToast('مزامنة ناجحة', 'تم تحديث البيانات الحية بنجاح، وجميع السجلات الحالية مستقرة.', 'success');
+        showToast('مزامنة ناجحة', 'جميع السجلات مستقرة.', 'success');
       }
-
       document.getElementById('syncIcon').textContent = '🔄';
-      syncBtn.setAttribute('onclick', 'loadData()');
+      btn.setAttribute('onclick', 'loadData()');
     })
     .catch(err => {
-      showError('خطأ في مزامنة البيانات الحية: ' + err.message);
-      showToast('فشل المزامنة', 'تعذر الاتصال بالخادم، يرجى مراجعة اتصال الإنترنت.', 'error');
+      showError('خطأ: ' + err.message);
+      showToast('فشل المزامنة', 'تعذر الاتصال بالخادم.', 'error');
       document.getElementById('syncIcon').textContent = '🔄';
-      syncBtn.setAttribute('onclick', 'loadData()');
+      btn.setAttribute('onclick', 'loadData()');
     });
 }
 
@@ -627,252 +454,127 @@ function showError(msg) { const b = document.getElementById('errorBanner'); b.te
 function hideError() { document.getElementById('errorBanner').style.display = 'none'; }
 
 function calculateSafetyScore() {
-  if(!allData.length) return;
-  const recentExpired = allData.filter(r => r.days < 0).length; 
-  const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
-  
-  let score = 100 - ((recentExpired * 4) + (critical * 1.5));
-  if(score < 0) score = 0;
-  score = Math.round(score);
-
-  const scoreText = document.getElementById('scoreText');
-  const scoreBar = document.getElementById('scoreBar');
-  const safetyPanel = document.getElementById('safetyPanel');
-
-  if(safetyPanel) safetyPanel.style.display = 'flex';
-  if(scoreText) scoreText.textContent = score + '%';
-  if(scoreBar) {
-    scoreBar.style.width = score + '%';
-    if(score > 80) { scoreText.style.color = 'var(--green)'; scoreBar.style.background = 'var(--green)'; }
-    else if(score > 50) { scoreText.style.color = 'var(--orange)'; scoreBar.style.background = 'var(--orange)'; }
-    else { scoreText.style.color = 'var(--red)'; scoreBar.style.background = 'var(--red)'; }
+  if (!allData.length) return;
+  const exp = allData.filter(r => r.days < 0).length;
+  const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
+  let score = Math.max(0, Math.round(100 - (exp*4) - (crit*1.5)));
+  const panel = document.getElementById('safetyPanel');
+  const txt = document.getElementById('scoreText');
+  const bar = document.getElementById('scoreBar');
+  if (panel) panel.style.display = 'flex';
+  if (txt) txt.textContent = score + '%';
+  if (bar) {
+    bar.style.width = score + '%';
+    const c = score > 80 ? 'var(--green)' : score > 50 ? 'var(--orange)' : 'var(--red)';
+    bar.style.background = c;
+    txt.style.color = c;
   }
 }
 
-function handleGlobalSearch(query) {
-  searchQuery = query.trim().toLowerCase();
-  if(searchQuery !== "") {
-    activeTab = 'all';
-    currentSubFilter = 'all';
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-all').classList.add('active');
-  }
-  renderTab(activeTab);
-  const searchInput = document.getElementById('tableSearch');
-  if(searchInput) searchInput.value = query;
+function startAutomatedReminderSystem() {
+  setInterval(() => {
+    const exp = allData.filter(r => r.days < 0).length;
+    const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
+    if (exp > 0 || crit > 0) showToast('🚨 تذكير دوري', `${exp} منتهية و${crit} حرجة.`, 'error');
+  }, REMINDER_HOURS * 3600000);
 }
 
-function copyReminder(name, type, days, expiry) {
-  let text = "";
-  if(days < 0) {
-    text = `⚠️ *تذكير عاجل - مطاعم كبابجي* ⚠️\n\nتفيد لوحة المؤشرات بأن وثيقة (*${type}*) الخاصة بـ *${name}* منتهية منذ ${Math.abs(days)} يوم (تاريخ الانتهاء: ${expiry}).\nيرجى العمل على التجديد فوراً لتفادي المخالفات النظامية وغرامات التأخير.`;
-  } else if(days === 0) {
-    text = `🚨 *إشعار حرج جداً - مطاعم كبابجي* 🚨\n\nتفيد لوحة المؤشرات بأن وثيقة (*${type}*) الخاصة بـ *${name}* *تنتهي اليوم* (${expiry}).\nيرجى التنسيق السريع لإتمام إجراءات التجديد فوراً.`;
-  } else {
-    text = `🔔 *تنبيه متابعة - مطاعم كبابجي* 🔔\n\nيرجى الإحاطة بأن وثيقة (*${type}*) الخاصة بـ *${name}* متبقي على انتهائها ${days} يوم (تاريخ الانتهاء: ${expiry}).\nيرجى تجهيز ومراجعة الأوراق المطلوبة للتجديد تفادياً للدخول في النطاق الحرج.`;
-  }
-  
-  navigator.clipboard.writeText(text).then(() => {
-    showToast('نسخ ناجح الخطاب', `تم نسخ نص التذكير الخاص بـ (${name}) وهو جاهز للإرسال الفوري.`, 'success');
-  }).catch(() => {
-    alert("فشل نسخ النص، يرجى المحاولة مرة أخرى.");
-  });
-}
-
-function getStatus(days) {
-  if (days < 0) return 'expired';
-  if (days <= 14) return 'critical';
-  if (days <= 30) return 'soon';
-  return 'ok';
-}
-
+// ── مساعدات ──────────────────────────────────────────────
+function getStatus(days) { return days < 0 ? 'expired' : days <= 14 ? 'critical' : days <= 30 ? 'soon' : 'ok'; }
 function statusLabel(days) {
   if (days < 0) return `منتهية منذ (${Math.abs(days)} يوم) 🔴`;
   if (days === 0) return 'تنتهي اليوم 🚨';
   if (days <= 14) return `متبقي ${days} يوم 🟠`;
   return `متبقي ${days} يوم`;
 }
-
 function docTypeLabel(type) {
-  const map = { 'اقامات': '🪪 إقامة', 'التامين الطبي': '🏥 تأمين طبي', 'عقود العمل': '📄 عقد عمل', 'السجلات والرخص': '📜 رخصة / سجل' };
-  return map[type] || type;
+  const m = { 'اقامات':'🪪 إقامة', 'التامين الطبي':'🏥 تأمين طبي', 'عقود العمل':'📄 عقد عمل', 'السجلات والرخص':'📜 رخصة / سجل' };
+  return m[type] || type;
 }
 
+function handleGlobalSearch(q) {
+  searchQuery = q.trim().toLowerCase();
+  if (searchQuery) { activeTab = 'all'; document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===3)); }
+  renderTab(activeTab);
+  const s = document.getElementById('tableSearch');
+  if (s) s.value = q;
+}
+
+function copyReminder(name, type, days, expiry) {
+  let text = '';
+  if (days < 0) text = `⚠️ *تذكير عاجل - مطاعم كبابجي* ⚠️\n\nوثيقة (*${type}*) الخاصة بـ *${name}* منتهية منذ ${Math.abs(days)} يوم (${expiry}).\nيرجى التجديد فوراً.`;
+  else if (days === 0) text = `🚨 *إشعار حرج - مطاعم كبابجي* 🚨\n\nوثيقة (*${type}*) الخاصة بـ *${name}* *تنتهي اليوم* (${expiry}).`;
+  else text = `🔔 *تنبيه متابعة - مطاعم كبابجي* 🔔\n\nوثيقة (*${type}*) الخاصة بـ *${name}* متبقي ${days} يوم (${expiry}).`;
+  navigator.clipboard.writeText(text).then(() => showToast('تم النسخ ✅', `تم نسخ تذكير ${name}.`, 'success')).catch(() => alert('فشل النسخ'));
+}
+
+// ── عرض ─────────────────────────────────────────────────
 function renderAll() { renderKPIs(); renderTab(activeTab); }
 
 function renderKPIs() {
-  const expired = allData.filter(r => r.days < 0).length; 
-  const critical = allData.filter(r => r.days >= 0 && r.days <= 14).length;
+  const exp = allData.filter(r => r.days < 0).length;
+  const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
   const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
   const ok = allData.filter(r => r.days > 30).length;
-
   document.getElementById('kpiGrid').innerHTML = `
-    <div class="kpi-card danger">
-      <span class="kpi-icon">🔴</span>
-      <div class="kpi-value">${expired}</div>
-      <div class="kpi-label">وثائق منتهية حديثاً</div>
-      <div class="kpi-sub">منذ 30 يوم أو أقل</div>
-    </div>
-    <div class="kpi-card warning">
-      <span class="kpi-icon">🟠</span>
-      <div class="kpi-value">${critical}</div>
-      <div class="kpi-label">تنتهي خلال 14 يوم</div>
-      <div class="kpi-sub">حرجة جداً وعاجلة</div>
-    </div>
-    <div class="kpi-card caution">
-      <span class="kpi-icon">🟡</span>
-      <div class="kpi-value">${soon}</div>
-      <div class="kpi-label">تنتهي خلال شهر</div>
-      <div class="kpi-sub">متابعة ما قبل المخالفة</div>
-    </div>
-    <div class="kpi-card good">
-      <span class="kpi-icon">🟢</span>
-      <div class="kpi-value">${ok}</div>
-      <div class="kpi-label">سارية ومستقرة</div>
-      <div class="kpi-sub">وضع نظامي آمن</div>
-    </div>
-    <div class="kpi-card total">
-      <span class="kpi-icon">📋</span>
-      <div class="kpi-value">${allData.length}</div>
-      <div class="kpi-label">إجمالي السجلات الفعالة</div>
-      <div class="kpi-sub">المستقبلية والمنتهية حديثاً</div>
-    </div>
+    <div class="kpi-card danger"><span class="kpi-icon">🔴</span><div class="kpi-value">${exp}</div><div class="kpi-label">وثائق منتهية حديثاً</div><div class="kpi-sub">منذ 30 يوم أو أقل</div></div>
+    <div class="kpi-card warning"><span class="kpi-icon">🟠</span><div class="kpi-value">${crit}</div><div class="kpi-label">تنتهي خلال 14 يوم</div><div class="kpi-sub">حرجة جداً وعاجلة</div></div>
+    <div class="kpi-card caution"><span class="kpi-icon">🟡</span><div class="kpi-value">${soon}</div><div class="kpi-label">تنتهي خلال شهر</div><div class="kpi-sub">متابعة ما قبل المخالفة</div></div>
+    <div class="kpi-card good"><span class="kpi-icon">🟢</span><div class="kpi-value">${ok}</div><div class="kpi-label">سارية ومستقرة</div><div class="kpi-sub">وضع نظامي آمن</div></div>
+    <div class="kpi-card total"><span class="kpi-icon">📋</span><div class="kpi-value">${allData.length}</div><div class="kpi-label">إجمالي السجلات الفعالة</div><div class="kpi-sub">المستقبلية والمنتهية حديثاً</div></div>
   `;
 }
 
 function switchTab(tab) {
   activeTab = tab;
-  if(tab !== 'all') { searchQuery = ''; document.getElementById('globalSearch').value = ''; }
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    const tabs = ['alerts','weekly','monthly','all','branches'];
-    b.classList.toggle('active', tabs[i] === tab);
-  });
+  if (tab !== 'all') { searchQuery = ''; document.getElementById('globalSearch').value = ''; }
+  const tabs = ['alerts','weekly','monthly','all','branches','manage','tasks'];
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
   renderTab(tab);
 }
 
 function renderTab(tab) {
   const el = document.getElementById('tabContent');
-  if (!allData.length) { el.innerHTML = '<div class="empty-state">لا توجد بيانات محملة حالياً.</div>'; return; }
-
-  if (tab === 'alerts') renderAlertsTab(el);
-  else if (tab === 'weekly') renderPeriodTab(el, -30, 7, 'متابعة أسبوعية: وثائق منتهية (ضمن 30 يوم) أو تنتهي خلال 7 أيام القادمة');
-  else if (tab === 'monthly') renderPeriodTab(el, -30, 30, 'متابعة شهرية شاملة: وثائق منتهية حديثاً وتلك التي تنتهي خلال الـ 30 يوماً القادمة');
-  else if (tab === 'all') renderAllDocsTab(el);
+  if (!allData.length && tab !== 'manage' && tab !== 'tasks') { el.innerHTML = '<div class="empty-state">لا توجد بيانات محملة.</div>'; return; }
+  if (tab === 'alerts')   renderAlertsTab(el);
+  else if (tab === 'weekly')   renderPeriodTab(el, -30, 7, 'متابعة أسبوعية');
+  else if (tab === 'monthly')  renderPeriodTab(el, -30, 30, 'متابعة شهرية شاملة');
+  else if (tab === 'all')      renderAllDocsTab(el);
   else if (tab === 'branches') renderBranchesTab(el);
+  else if (tab === 'manage')   renderManageTab(el);
+  else if (tab === 'tasks')    renderTasksTab(el);
 }
 
 function renderAlertsTab(el) {
   const urgent = allData.filter(r => r.days < 30).sort((a,b) => a.days - b.days);
-  let html = `<div class="section-title">⚡ لوحة الإنذارات والمتابعة السريعة الحالية <span class="badge">${urgent.length} إشعار</span></div>`;
-  
-  const expired = allData.filter(r => r.days < 0).length;
+  const exp = allData.filter(r => r.days < 0).length;
   const crit = allData.filter(r => r.days >= 0 && r.days <= 14).length;
   const soon = allData.filter(r => r.days > 14 && r.days <= 30).length;
   const ok = allData.filter(r => r.days > 30).length;
-
-  html += `
+  let html = `<div class="section-title">⚡ لوحة الإنذارات <span class="badge">${urgent.length} إشعار</span></div>
     <div class="content-grid">
       <div class="chart-panel"><div style="position:relative;height:200px"><canvas id="statusChart"></canvas></div></div>
       <div class="chart-panel"><div style="position:relative;height:200px"><canvas id="typeChart"></canvas></div></div>
-    </div>
-  `;
-
-  const types = ['اقامات', 'التامين الطبي', 'عقود العمل', 'السجلات والرخص'];
-  let tablesHtml = '';
-
+    </div>`;
+  const types = ['اقامات','التامين الطبي','عقود العمل','السجلات والرخص'];
+  let tables = '';
   for (const type of types) {
     const items = urgent.filter(r => r.type === type);
     if (!items.length) continue;
-    
-    tablesHtml += `
-      <div class="full-table">
-        <div class="panel-header"><h3>🚨 ${docTypeLabel(type)} المستحقة للمتابعة</h3></div>
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>#</th><th>الاسم / البيان</th><th>الفرع</th><th>تاريخ الانتهاء</th><th>الوضعية والمهلة</th><th>متابعة سريعة</th></tr></thead>
-            <tbody>
-              ${items.map((r, i) => `
-                <tr>
-                  <td>${i+1}</td>
-                  <td><strong>${r.name}</strong></td>
-                  <td><span class="branch-tag">${r.branch}</span></td>
-                  <td><code>${r.expiry}</code></td>
-                  <td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td>
-                  <td><button class="notify-btn" onclick="copyReminder('${r.name}', '${docTypeLabel(r.type)}', ${r.days}, '${r.expiry}')">📋 نسخ خطاب</button></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
+    tables += `<div class="full-table"><div class="panel-header"><h3>🚨 ${docTypeLabel(type)} المستحقة</h3></div><div class="table-wrapper"><table><thead><tr><th>#</th><th>الاسم</th><th>الفرع</th><th>تاريخ الانتهاء</th><th>الوضعية</th><th>متابعة</th></tr></thead><tbody>${items.map((r,i) => `<tr><td>${i+1}</td><td><strong>${r.name}</strong></td><td><span class="branch-tag">${r.branch}</span></td><td><code>${r.expiry}</code></td><td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td><td><button class="notify-btn" onclick="copyReminder('${r.name}','${docTypeLabel(r.type)}',${r.days},'${r.expiry}')">📋 نسخ خطاب</button></td></tr>`).join('')}</tbody></table></div></div>`;
   }
-
-  el.innerHTML = html + (tablesHtml || '<div class="empty-state">🎉 ممتاز! جميع الأوراق والوثائق الفعالة مسجلة وصالحة لفترة آمنة.</div>');
-  buildCharts(expired, crit, soon, ok);
+  el.innerHTML = html + (tables || '<div class="empty-state">🎉 جميع الأوراق سارية.</div>');
+  buildCharts(exp, crit, soon, ok);
 }
 
-function renderPeriodTab(el, minDays, maxDays, title) {
-  const items = allData.filter(r => r.days >= minDays && r.days <= maxDays).sort((a,b) => a.days - b.days);
-  
-  el.innerHTML = `
-    <div class="section-title">📅 ${title} <span class="badge" style="background:var(--blue)">${items.length} سجل</span></div>
-    ${items.length === 0 ? '<div class="empty-state">🎉 النطاق المحدد سليم بالكامل من أي مشاكل أو تواريخ مستحقة.</div>' : `
-      <div class="full-table">
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>#</th><th>الاسم والبيان</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة والمهلة</th><th>متابعة</th></tr></thead>
-            <tbody>
-              ${items.map((r,i) => `
-                <tr>
-                  <td>${i+1}</td>
-                  <td><strong>${r.name}</strong></td>
-                  <td><span class="branch-tag">${r.branch}</span></td>
-                  <td>${docTypeLabel(r.type)}</td>
-                  <td><code>${r.expiry}</code></td>
-                  <td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td>
-                  <td><button class="notify-btn" onclick="copyReminder('${r.name}', '${docTypeLabel(r.type)}', ${r.days}, '${r.expiry}')">📋 نسخ خطاب</button></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `}
-  `;
+function renderPeriodTab(el, min, max, title) {
+  const items = allData.filter(r => r.days >= min && r.days <= max).sort((a,b) => a.days - b.days);
+  el.innerHTML = `<div class="section-title">📅 ${title} <span class="badge" style="background:var(--blue)">${items.length} سجل</span></div>${!items.length ? '<div class="empty-state">🎉 النطاق سليم.</div>' : `<div class="full-table"><div class="table-wrapper"><table><thead><tr><th>#</th><th>الاسم</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة</th><th>متابعة</th></tr></thead><tbody>${items.map((r,i)=>`<tr><td>${i+1}</td><td><strong>${r.name}</strong></td><td><span class="branch-tag">${r.branch}</span></td><td>${docTypeLabel(r.type)}</td><td><code>${r.expiry}</code></td><td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td><td><button class="notify-btn" onclick="copyReminder('${r.name}','${docTypeLabel(r.type)}',${r.days},'${r.expiry}')">📋 خطاب</button></td></tr>`).join('')}</tbody></table></div></div>`}`;
 }
 
 function renderAllDocsTab(el) {
-  const filters = [
-    { key: 'all', label: '🗂️ عرض كامل الأرشيف الفعال' },
-    { key: 'اقامات', label: '🪪 الإقامات' },
-    { key: 'التامين الطبي', label: '🏥 التأمين الطبي' },
-    { key: 'عقود العمل', label: '📄 عقود العمل' },
-    { key: 'السجلات والرخص', label: '📜 الرخص والسجلات' }
-  ];
-
-  el.innerHTML = `
-    <div class="section-title">📋 فلترة الأرشيف الفعال والبحث الفوري</div>
-    <div class="filter-bar">
-      ${filters.map(f => `<button class="filter-btn ${f.key === currentSubFilter ? 'active' : ''}" onclick="applySubFilter('${f.key}', this)">${f.label}</button>`).join('')}
-    </div>
-    
-    <div class="search-export-container">
-      <div class="search-box">
-        <input type="text" id="tableSearch" value="${searchQuery}" placeholder="🔍 ابدأ بكتابة اسم موظف، فرع أو أي بيان لتصفيته حالاً..." oninput="triggerSearch(this.value)">
-      </div>
-      <button class="export-btn" onclick="exportTableToCSV()">📥 تصدير الجدول الحالي لملف Excel</button>
-    </div>
-
-    <div class="full-table">
-      <div class="table-wrapper">
-        <table>
-          <thead><tr><th>#</th><th>الاسم والبيان</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>العد التنازلي والوضعية</th><th>إجراء</th></tr></thead>
-          <tbody id="allDocsTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-  `;
+  const filters = [{key:'all',label:'🗂️ الكل'},{key:'اقامات',label:'🪪 الإقامات'},{key:'التامين الطبي',label:'🏥 التأمين'},{key:'عقود العمل',label:'📄 العقود'},{key:'السجلات والرخص',label:'📜 الرخص'}];
+  el.innerHTML = `<div class="section-title">📋 فلترة وبحث</div><div class="filter-bar">${filters.map(f=>`<button class="filter-btn ${f.key===currentSubFilter?'active':''}" onclick="applySubFilter('${f.key}',this)">${f.label}</button>`).join('')}</div><div class="search-export-container"><div class="search-box"><input type="text" id="tableSearch" value="${searchQuery}" placeholder="🔍 ابحث..." oninput="triggerSearch(this.value)"></div><button class="export-btn" onclick="exportTableToCSV()">📥 تصدير Excel</button></div><div class="full-table"><div class="table-wrapper"><table><thead><tr><th>#</th><th>الاسم</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الوضعية</th><th>إجراء</th></tr></thead><tbody id="allDocsTableBody"></tbody></table></div></div>`;
   filterAndDrawTable();
 }
 
@@ -882,31 +584,120 @@ function applySubFilter(key, btn) {
   btn.classList.add('active');
   filterAndDrawTable();
 }
-
 function triggerSearch(val) {
   searchQuery = val.trim().toLowerCase();
-  const globalInput = document.getElementById('globalSearch');
-  if(globalInput) globalInput.value = val;
+  const g = document.getElementById('globalSearch');
+  if (g) g.value = val;
   filterAndDrawTable();
 }
-
 function filterAndDrawTable() {
   const tbody = document.getElementById('allDocsTableBody');
-  if(!tbody) return;
-
+  if (!tbody) return;
   let filtered = currentSubFilter === 'all' ? allData : allData.filter(r => r.type === currentSubFilter);
-  
-  if(searchQuery) {
-    filtered = filtered.filter(r => r.name.toLowerCase().includes(searchQuery) || r.branch.toLowerCase().includes(searchQuery));
-  }
+  if (searchQuery) filtered = filtered.filter(r => r.name.toLowerCase().includes(searchQuery) || r.branch.toLowerCase().includes(searchQuery));
   filtered.sort((a,b) => a.days - b.days);
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">لا نتائج.</td></tr>'; return; }
+  tbody.innerHTML = filtered.map((r,i) => `<tr><td>${i+1}</td><td><strong>${r.name}</strong></td><td><span class="branch-tag">${r.branch}</span></td><td>${docTypeLabel(r.type)}</td><td><code>${r.expiry}</code></td><td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td><td><button class="notify-btn" onclick="copyReminder('${r.name}','${docTypeLabel(r.type)}',${r.days},'${r.expiry}')">📋 خطاب</button></td></tr>`).join('');
+}
 
-  if(filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--muted)">🔍 لا توجد نتائج تطابق استعلامك في السجلات الحية.</td></tr>';
-    return;
-  }
+function renderBranchesTab(el) {
+  const branches = [...new Set(allData.map(r => r.branch))].sort();
+  let html = '<div class="section-title">🏪 تحليل الفروع</div><div class="branch-overview">';
+  branches.forEach(b => {
+    const bi = allData.filter(r => r.branch === b);
+    const exp = bi.filter(r => r.days < 0).length;
+    const crit = bi.filter(r => r.days >= 0 && r.days <= 14).length;
+    const ok = bi.filter(r => r.days > 14).length;
+    html += `<div class="branch-card"><div class="b-name">${b}</div><div class="b-counts">${exp?`<span class="b-count red">منتهية: ${exp}</span>`:''} ${crit?`<span class="b-count orange">عاجلة: ${crit}</span>`:''}<span class="b-count green">سارية: ${ok}</span></div></div>`;
+  });
+  html += '</div>';
+  branches.forEach(b => {
+    const bi = allData.filter(r => r.branch === b).sort((a,c) => a.days - c.days);
+    const d = bi.filter(r => r.days < 30).length;
+    html += `<div class="full-table"><div class="panel-header"><h3>🏪 ${b}</h3><span style="font-size:12px;font-weight:bold;">${bi.length} وثيقة${d>0?` — <span style="color:var(--red)">${d} تحت المتابعة</span>`:''}</span></div><div class="table-wrapper"><table><thead><tr><th>الاسم</th><th>النوع</th><th>تاريخ الانتهاء</th><th>العد التنازلي</th><th>إجراء</th></tr></thead><tbody>${bi.map(r=>`<tr><td><strong>${r.name}</strong></td><td>${docTypeLabel(r.type)}</td><td><code>${r.expiry}</code></td><td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td><td><button class="notify-btn" onclick="copyReminder('${r.name}','${docTypeLabel(r.type)}',${r.days},'${r.expiry}')">📋 خطاب</button></td></tr>`).join('')}</tbody></table></div></div>`;
+  });
+  el.innerHTML = html;
+}
 
-  tbody.innerHTML = filtered.map((r, i) => `
+function buildCharts(expired, crit, soon, ok) {
+  setTimeout(() => {
+    const c1 = document.getElementById('statusChart'), c2 = document.getElementById('typeChart');
+    if (!c1 || !c2) return;
+    new Chart(c1, { type:'doughnut', data:{ labels:['منتهية','عاجلة','قريبة','سارية'], datasets:[{data:[expired,crit,soon,ok],backgroundColor:['#C0392B','#D35400','#D4AC0D','#1E8449'],borderWidth:0}] }, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{family:'Tajawal',size:11}}}}} });
+    const sub = ['اقامات','التامين الطبي','عقود العمل','السجلات والرخص'];
+    new Chart(c2, { type:'bar', data:{ labels:['إقامات','تأمين','عقود','رخص'], datasets:[{data:sub.map(t=>allData.filter(r=>r.type===t).length),backgroundColor:['#1A5276','#1E8449','#D35400','#5D6D7E'],borderRadius:6}] }, options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{ticks:{font:{family:'Tajawal',size:11}}}}} });
+  }, 60);
+}
+
+function exportTableToCSV() {
+  let filtered = currentSubFilter === 'all' ? allData : allData.filter(r => r.type === currentSubFilter);
+  if (searchQuery) filtered = filtered.filter(r => r.name.toLowerCase().includes(searchQuery) || r.branch.toLowerCase().includes(searchQuery));
+  if (!filtered.length) { alert('لا سجلات للتصدير.'); return; }
+  let csv = "﻿م,الاسم,الفرع,النوع,تاريخ_الانتهاء,الأيام\n";
+  filtered.forEach((r,i) => { csv += `${i+1},"${r.name}","${r.branch}","${docTypeLabel(r.type)}","${r.expiry}",${r.days}\n`; });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'})), download: `وثائق_كبابجي_${new Date().toISOString().slice(0,10)}.csv` });
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ── الأرشيف ──────────────────────────────────────────────
+function openArchiveModal() {
+  document.getElementById('archiveModal').style.display = 'flex';
+  const t = archivedData.length, e = archivedData.filter(r=>r.type==='اقامات').length, m = archivedData.filter(r=>r.type==='التامين الطبي').length, c = archivedData.filter(r=>r.type==='عقود العمل').length, l = archivedData.filter(r=>r.type==='السجلات والرخص').length;
+  document.getElementById('archiveStatsGrid').innerHTML = `<div class="archive-stat-card"><div class="num">${t}</div><div class="lbl">منتهية قديماً</div></div><div class="archive-stat-card"><div class="num" style="color:var(--blue)">${e}</div><div class="lbl">🪪 إقامات</div></div><div class="archive-stat-card"><div class="num" style="color:var(--green)">${m}</div><div class="lbl">🏥 تأمين</div></div><div class="archive-stat-card"><div class="num" style="color:var(--orange)">${c}</div><div class="lbl">📄 عقود</div></div><div class="archive-stat-card"><div class="num" style="color:var(--gray)">${l}</div><div class="lbl">📜 رخص</div></div>`;
+  filterArchiveTable();
+}
+function closeArchiveModal() { document.getElementById('archiveModal').style.display = 'none'; }
+function filterArchiveTable() {
+  const q = document.getElementById('archiveSearch').value.trim().toLowerCase();
+  const tbody = document.getElementById('archiveTableBody');
+  let filtered = q ? archivedData.filter(r => r.name.toLowerCase().includes(q) || r.branch.toLowerCase().includes(q)) : archivedData;
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">لا نتائج.</td></tr>'; return; }
+  tbody.innerHTML = filtered.map((r,i) => `<tr><td>${i+1}</td><td><strong>${r.name}</strong></td><td><span class="branch-tag">${r.branch}</span></td><td>${docTypeLabel(r.type)}</td><td><code style="color:var(--red);font-weight:bold">${r.expiry}</code></td><td><span class="status-pill expired">منتهية منذ ${Math.abs(r.days)} يوم 🔴</span></td><td><button class="notify-btn" onclick="copyReminder('${r.name}','${docTypeLabel(r.type)}',${r.days},'${r.expiry}')">📋 خطاب</button></td></tr>`).join('');
+}
+
+// ── إدارة الوثائق (CRUD) ────────────────────────────────
+function renderManageTab(el) {
+  const filters = [{key:'all',label:'🗂️ الكل'},{key:'اقامات',label:'🪪 الإقامات'},{key:'التامين الطبي',label:'🏥 التأمين'},{key:'عقود العمل',label:'📄 العقود'},{key:'السجلات والرخص',label:'📜 الرخص'}];
+  el.innerHTML = `
+    <div class="manage-header">
+      <div class="section-title" style="margin:0">⚙️ إدارة الوثائق — إضافة وتعديل وحذف</div>
+      <button class="add-btn" onclick="openDocModal(null)">➕ إضافة وثيقة / موظف جديد</button>
+    </div>
+    <div class="filter-bar" id="manageFilterBar">
+      ${filters.map(f=>`<button class="filter-btn ${f.key===manageTypeFilter?'active':''}" onclick="applyManageFilter('${f.key}',this)">${f.label}</button>`).join('')}
+    </div>
+    <div class="search-export-container">
+      <div class="search-box"><input type="text" id="manageSearch" placeholder="🔍 ابحث عن موظف أو وثيقة..." oninput="renderManageTable(this.value)"></div>
+    </div>
+    <div class="full-table">
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>#</th><th>الاسم / الوثيقة</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+          <tbody id="manageTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  renderManageTable('');
+}
+
+function applyManageFilter(key, btn) {
+  manageTypeFilter = key;
+  document.querySelectorAll('#manageFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderManageTable(document.getElementById('manageSearch')?.value || '');
+}
+
+function renderManageTable(q) {
+  const tbody = document.getElementById('manageTableBody');
+  if (!tbody) return;
+  let data = [...rawData];
+  if (manageTypeFilter !== 'all') data = data.filter(r => r.type === manageTypeFilter);
+  if (q) { const sq = q.trim().toLowerCase(); data = data.filter(r => r.name.toLowerCase().includes(sq) || r.branch.toLowerCase().includes(sq)); }
+  data.sort((a,b) => a.days - b.days);
+  manageTableData = data;
+  if (!data.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">لا توجد نتائج.</td></tr>'; return; }
+  tbody.innerHTML = data.map((r,i) => `
     <tr>
       <td>${i+1}</td>
       <td><strong>${r.name}</strong></td>
@@ -914,181 +705,221 @@ function filterAndDrawTable() {
       <td>${docTypeLabel(r.type)}</td>
       <td><code>${r.expiry}</code></td>
       <td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td>
-      <td><button class="notify-btn" onclick="copyReminder('${r.name}', '${docTypeLabel(r.type)}', ${r.days}, '${r.expiry}')">📋 خطاب</button></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="edit-btn" onclick="openDocModal(${i})">✏️ تعديل</button>
+        <button class="del-btn"  onclick="deleteDocByIndex(${i})">🗑️ حذف</button>
+      </td>
     </tr>
   `).join('');
 }
 
-function renderBranchesTab(el) {
-  const branches = [...new Set(allData.map(r => r.branch))].sort();
-  let html = '<div class="section-title">🏪 تحليل وتوزيع المسؤوليات النظامية حسب الفرع (للوثائق الحالية والمستحقة حديثاً)</div>';
-  
-  html += '<div class="branch-overview">';
-  branches.forEach(b => {
-    const bItems = allData.filter(r => r.branch === b);
-    const exp = bItems.filter(r => r.days < 0).length;
-    const crit = bItems.filter(r => r.days >= 0 && r.days <= 14).length;
-    const ok = bItems.filter(r => r.days > 14).length;
+function openDocModal(indexOrNull) {
+  const branches = [...new Set(rawData.map(r => r.branch).filter(b => b && b !== '—'))].sort();
+  document.getElementById('branchesList').innerHTML = branches.map(b => `<option value="${b}">`).join('');
+  if (indexOrNull !== null && indexOrNull !== undefined) {
+    const r = manageTableData[indexOrNull];
+    document.getElementById('formModalTitle').textContent = '✏️ تعديل الوثيقة';
+    document.getElementById('formMode').value = 'edit';
+    document.getElementById('formRowNum').value = r.rowNum;
+    document.getElementById('formType').value = r.type;
+    document.getElementById('formType').disabled = true;
+    document.getElementById('formName').value = r.name;
+    document.getElementById('formBranch').value = r.branch === '—' ? '' : r.branch;
+    document.getElementById('formExpiry').value = r.expiry;
+  } else {
+    document.getElementById('formModalTitle').textContent = '➕ إضافة وثيقة / موظف جديد';
+    document.getElementById('formMode').value = 'add';
+    document.getElementById('formRowNum').value = '';
+    document.getElementById('formType').value = 'اقامات';
+    document.getElementById('formType').disabled = false;
+    document.getElementById('formName').value = '';
+    document.getElementById('formBranch').value = '';
+    document.getElementById('formExpiry').value = '';
+  }
+  document.getElementById('docFormModal').style.display = 'flex';
+}
 
-    html += `
-      <div class="branch-card">
-        <div class="b-name">${b}</div>
-        <div class="b-counts">
-          ${exp > 0 ? `<span class="b-count red">منتهية جديداً: ${exp}</span>` : ''}
-          ${crit > 0 ? `<span class="b-count orange">عاجلة: ${crit}</span>` : ''}
-          <span class="b-count green">سارية: ${ok}</span>
-        </div>
+function closeDocModal() { document.getElementById('docFormModal').style.display = 'none'; }
+
+async function saveDoc() {
+  const mode   = document.getElementById('formMode').value;
+  const type   = document.getElementById('formType').value;
+  const name   = document.getElementById('formName').value.trim();
+  const branch = document.getElementById('formBranch').value.trim();
+  const expiry = document.getElementById('formExpiry').value;
+  if (!name || !branch || !expiry) { showToast('بيانات ناقصة', 'يرجى تعبئة جميع الحقول.', 'warning'); return; }
+
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+
+  const params = { action: mode === 'edit' ? 'update' : 'add', type, name, branch, expiry };
+  if (mode === 'edit') params.rowNum = document.getElementById('formRowNum').value;
+
+  try {
+    const url = new URL(API_URL);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+    url.searchParams.set('t', Date.now());
+    const res = await fetch(url.toString()).then(r => r.json());
+    if (res.success) {
+      closeDocModal();
+      showToast('تم الحفظ ✅', `تم ${mode==='add'?'إضافة':'تعديل'} الوثيقة بنجاح.`, 'success');
+      loadData();
+    } else { showToast('خطأ في الحفظ', res.error || 'خطأ غير متوقع.', 'error'); }
+  } catch(err) { showToast('خطأ في الاتصال', err.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = '💾 حفظ'; }
+}
+
+function deleteDocByIndex(i) {
+  const r = manageTableData[i];
+  deleteDoc(r.type, r.rowNum, r.name);
+}
+
+async function deleteDoc(type, rowNum, name) {
+  if (!confirm(`هل أنت متأكد من حذف:\n"${name}"\nهذا الإجراء لا يمكن التراجع عنه.`)) return;
+  try {
+    const url = new URL(API_URL);
+    url.searchParams.set('action', 'delete');
+    url.searchParams.set('type', type);
+    url.searchParams.set('rowNum', rowNum);
+    url.searchParams.set('t', Date.now());
+    const res = await fetch(url.toString()).then(r => r.json());
+    if (res.success) { showToast('تم الحذف ✅', `تم حذف "${name}" بنجاح.`, 'success'); loadData(); }
+    else showToast('خطأ في الحذف', res.error || 'خطأ.', 'error');
+  } catch(err) { showToast('خطأ في الاتصال', err.message, 'error'); }
+}
+
+// ── المهام ────────────────────────────────────────────────
+let tasksData = [];
+
+async function loadTasks() {
+  try {
+    const url = new URL(API_URL);
+    url.searchParams.set('action', 'list_tasks');
+    url.searchParams.set('t', Date.now());
+    const res = await fetch(url.toString()).then(r => r.json());
+    tasksData = Array.isArray(res) ? res : [];
+  } catch(e) { tasksData = []; }
+}
+
+async function renderTasksTab(el) {
+  el.innerHTML = '<div class="loading-state"><div class="spinner"></div><p>جاري تحميل المهام...</p></div>';
+  await loadTasks();
+
+  const overdue = tasksData.filter(t => t.daysLeft < 0);
+  const today   = tasksData.filter(t => t.daysLeft === 0);
+  const future  = tasksData.filter(t => t.daysLeft > 0);
+
+  function taskCard(t) {
+    const cls  = t.daysLeft < 0 ? 'overdue' : t.daysLeft === 0 ? 'today' : 'future';
+    const dlbl = t.daysLeft < 0 ? `متأخرة ${Math.abs(t.daysLeft)} يوم 🔴` : t.daysLeft === 0 ? 'اليوم 🟠' : `بعد ${t.daysLeft} يوم`;
+    const safeName = t.name.replace(/'/g, "\\'");
+    return `<div class="task-card ${cls}">
+      <div class="task-info">
+        <div class="task-name">${t.name}</div>
+        <div class="task-date-label">📅 ${t.date} — ${dlbl}</div>
       </div>
-    `;
-  });
+      <div class="task-actions">
+        <button class="done-btn"     onclick="doneTask(${t.rowNum},'${safeName}')">✅ تم</button>
+        <button class="postpone-btn" onclick="postponeTask(${t.rowNum},'${safeName}')">📅 تأجيل</button>
+      </div>
+    </div>`;
+  }
+
+  let html = `
+    <div class="manage-header">
+      <div class="section-title" style="margin:0">📝 قائمة المهام</div>
+      <button class="add-btn" onclick="openTaskModal()">➕ إضافة مهمة</button>
+    </div>
+    <div class="tasks-kpi">
+      <div class="task-kpi-card"><div class="num" style="color:var(--red)">${overdue.length}</div><div class="lbl">🔴 متأخرة</div></div>
+      <div class="task-kpi-card"><div class="num" style="color:var(--orange)">${today.length}</div><div class="lbl">🟠 اليوم</div></div>
+      <div class="task-kpi-card"><div class="num" style="color:var(--blue)">${future.length}</div><div class="lbl">🔵 قادمة</div></div>
+      <div class="task-kpi-card"><div class="num" style="color:var(--gray)">${tasksData.length}</div><div class="lbl">📋 الإجمالي</div></div>
+    </div>
+    <div class="task-list">`;
+
+  if (overdue.length || today.length) {
+    html += `<div class="task-section-title">⚡ مطلوب إنجازها — اليوم والمتأخرة</div>`;
+    [...overdue, ...today].forEach(t => { html += taskCard(t); });
+  }
+  if (future.length) {
+    html += `<div class="task-section-title">📆 المهام القادمة</div>`;
+    future.forEach(t => { html += taskCard(t); });
+  }
+  if (!tasksData.length) {
+    html += `<div class="empty-state">🎉 لا توجد مهام حالياً. أضف مهمة جديدة من الزر أعلاه.</div>`;
+  }
   html += '</div>';
-
-  branches.forEach(b => {
-    const bItems = allData.filter(r => r.branch === b).sort((a,b) => a.days - b.days);
-    const dangerCount = bItems.filter(r => r.days < 30).length;
-
-    html += `
-      <div class="full-table">
-        <div class="panel-header">
-          <h3>🏪 إدارة / فرع: ${b}</h3>
-          <span style="font-size:12px; font-weight:bold;">
-            قوام الفرع النشط: ${bItems.length} وثيقة ${dangerCount > 0 ? ` — (<span style="color:var(--red)">${dangerCount} تحت المتابعة</span>)` : ''}
-          </span>
-        </div>
-        <div class="table-wrapper">
-          <table>
-            <thead><tr><th>اسم الموظف / الوثيقة</th><th>النوع</th><th>تاريخ الانتهاء</th><th>العد التنازلي</th><th>إجراء متابعة</th></tr></thead>
-            <tbody>
-              ${bItems.map(r => `
-                <tr>
-                  <td><strong>${r.name}</strong></td>
-                  <td>${docTypeLabel(r.type)}</td>
-                  <td><code>${r.expiry}</code></td>
-                  <td><span class="status-pill ${getStatus(r.days)}">${statusLabel(r.days)}</span></td>
-                  <td><button class="notify-btn" onclick="copyReminder('${r.name}', '${docTypeLabel(r.type)}', ${r.days}, '${r.expiry}')">📋 خطاب</button></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
-  });
   el.innerHTML = html;
 }
 
-function buildCharts(expired, crit, soon, ok) {
-  setTimeout(() => {
-    const canvas1 = document.getElementById('statusChart');
-    const canvas2 = document.getElementById('typeChart');
-    if (!canvas1 || !canvas2) return;
-
-    new Chart(canvas1, {
-      type: 'doughnut',
-      data: {
-        labels: ['منتهية (<=30 يوم)', 'عاجلة (<=14 يوم)', 'قريبة (<=30 يوم)', 'سارية'],
-        datasets: [{ data: [expired, crit, soon, ok], backgroundColor: ['#C0392B','#D35400','#D4AC0D','#1E8449'], borderWidth: 0 }]
-      },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { family: 'Tajawal', size: 11 } } } } }
-    });
-
-    const subTypes = ['اقامات', 'التامين الطبي', 'عقود العمل', 'السجلات والرخص'];
-    const counts = subTypes.map(t => allData.filter(r => r.type === t).length);
-
-    new Chart(canvas2, {
-      type: 'bar',
-      data: {
-        labels: ['إقامات', 'تأمين طبي', 'عقود العمل', 'رخص وسجلات'],
-        datasets: [{ data: counts, backgroundColor: ['#1A5276','#1E8449','#D35400','#5D6D7E'], borderRadius: 6 }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-        plugins: { legend: { display: false } },
-        scales: { x: { grid: { display: false } }, y: { ticks: { font: { family: 'Tajawal', size: 11 } } } }
-      }
-    });
-  }, 60);
+function openTaskModal() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('taskModalTitle').textContent = '➕ إضافة مهمة جديدة';
+  document.getElementById('taskName').value = '';
+  document.getElementById('taskDate').value = today;
+  document.getElementById('taskFormModal').style.display = 'flex';
 }
 
-function exportTableToCSV() {
-  let filtered = currentSubFilter === 'all' ? allData : allData.filter(r => r.type === currentSubFilter);
-  if(searchQuery) {
-    filtered = filtered.filter(r => r.name.toLowerCase().includes(searchQuery) || r.branch.toLowerCase().includes(searchQuery));
-  }
-  if(!filtered.length) { alert('لا تتوفر أي سجلات مرشحة حالياً لعملية التصدير.'); return; }
-
-  let csvContent = "\uFEFF"; 
-  csvContent += "م,الاسم_البيان,الفرع,النوع,تاريخ_الانتهاء,الأيام_المتبقية\n";
-  filtered.forEach((r, i) => { csvContent += `${i+1},"${r.name}","${r.branch}","${docTypeLabel(r.type)}","${r.expiry}",${r.days}\n`; });
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.setAttribute("href", url);
-  link.setAttribute("download", `جرد_وثائق_كبابجي_الفعالة_${new Date().toISOString().slice(0,10)}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+function closeTaskModal() {
+  document.getElementById('taskFormModal').style.display = 'none';
 }
 
-function openArchiveModal() {
-  document.getElementById('archiveModal').style.display = 'flex';
-  renderArchiveMiniStats();
-  filterArchiveTable();
+async function saveTask() {
+  const name = document.getElementById('taskName').value.trim();
+  const date = document.getElementById('taskDate').value;
+  if (!name || !date) { showToast('بيانات ناقصة', 'يرجى كتابة اسم المهمة والتاريخ.', 'warning'); return; }
+  const btn = document.getElementById('btnSaveTask');
+  btn.disabled = true; btn.textContent = '⏳ جاري الحفظ...';
+  try {
+    const url = new URL(API_URL);
+    url.searchParams.set('action', 'add_task');
+    url.searchParams.set('task', name);
+    url.searchParams.set('date', date);
+    url.searchParams.set('t', Date.now());
+    const res = await fetch(url.toString()).then(r => r.json());
+    if (res.success) {
+      closeTaskModal();
+      showToast('تمت الإضافة ✅', `تمت إضافة: ${name}`, 'success');
+      renderTasksTab(document.getElementById('tabContent'));
+    } else { showToast('خطأ في الحفظ', res.error || 'خطأ غير متوقع.', 'error'); }
+  } catch(err) { showToast('خطأ في الاتصال', err.message, 'error'); }
+  finally { btn.disabled = false; btn.textContent = '💾 حفظ'; }
 }
 
-function closeArchiveModal() {
-  document.getElementById('archiveModal').style.display = 'none';
+async function doneTask(rowNum, name) {
+  if (!confirm(`تأكيد إنجاز وحذف المهمة:\n"${name}"`)) return;
+  try {
+    const url = new URL(API_URL);
+    url.searchParams.set('action', 'done_task');
+    url.searchParams.set('rowNum', rowNum);
+    url.searchParams.set('t', Date.now());
+    const res = await fetch(url.toString()).then(r => r.json());
+    if (res.success) {
+      showToast('تم ✅', `تم إنجاز وحذف: ${name}`, 'success');
+      renderTasksTab(document.getElementById('tabContent'));
+    } else { showToast('خطأ', res.error || 'خطأ.', 'error'); }
+  } catch(err) { showToast('خطأ في الاتصال', err.message, 'error'); }
 }
 
-function renderArchiveMiniStats() {
-  const total = archivedData.length;
-  const eqama = archivedData.filter(r => r.type === 'اقامات').length;
-  const medical = archivedData.filter(r => r.type === 'التامين الطبي').length;
-  const contracts = archivedData.filter(r => r.type === 'عقود العمل').length;
-  const licenses = archivedData.filter(r => r.type === 'السجلات والرخص').length;
-
-  document.getElementById('archiveStatsGrid').innerHTML = `
-    <div class="archive-stat-card"><div class="num">${total}</div><div class="lbl">منتهية قديمة جداً</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--blue)">${eqama}</div><div class="lbl">🪪 إقامات متأخرة</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--green)">${medical}</div><div class="lbl">🏥 تأمين متأخر</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--orange)">${contracts}</div><div class="lbl">📄 عقود متأخرة</div></div>
-    <div class="archive-stat-card"><div class="num" style="color:var(--gray)">${licenses}</div><div class="lbl">📜 رخص متأخرة</div></div>
-  `;
+async function postponeTask(rowNum, name) {
+  const d = new Date(); d.setDate(d.getDate() + 1);
+  const newDate = d.toISOString().split('T')[0];
+  try {
+    const url = new URL(API_URL);
+    url.searchParams.set('action', 'postpone_task');
+    url.searchParams.set('rowNum', rowNum);
+    url.searchParams.set('date', newDate);
+    url.searchParams.set('t', Date.now());
+    const res = await fetch(url.toString()).then(r => r.json());
+    if (res.success) {
+      showToast('تم التأجيل 📅', `تم تأجيل "${name}" إلى الغد.`, 'success');
+      renderTasksTab(document.getElementById('tabContent'));
+    } else { showToast('خطأ', res.error || 'خطأ.', 'error'); }
+  } catch(err) { showToast('خطأ في الاتصال', err.message, 'error'); }
 }
 
-function filterArchiveTable() {
-  const q = document.getElementById('archiveSearch').value.trim().toLowerCase();
-  const tbody = document.getElementById('archiveTableBody');
-  
-  let filtered = archivedData;
-  if(q) {
-    filtered = archivedData.filter(r => r.name.toLowerCase().includes(q) || r.branch.toLowerCase().includes(q));
-  }
-
-  if(filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--muted)">🔍 لا توجد وثائق منتهية قديمة (تتجاوز 30 يوماً) تطابق البحث.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = filtered.map((r, i) => `
-    <tr>
-      <td>${i+1}</td>
-      <td><strong>${r.name}</strong></td>
-      <td><span class="branch-tag">${r.branch}</span></td>
-      <td>${docTypeLabel(r.type)}</td>
-      <td><code style="color:var(--red); font-weight:bold;">${r.expiry}</code></td>
-      <td><span class="status-pill expired">منتهية منذ ${Math.abs(r.days)} يوم 🔴</span></td>
-      <td><button class="notify-btn" onclick="copyReminder('${r.name}', '${docTypeLabel(r.type)}', ${r.days}, '${r.expiry}')">📋 خطاب تجديد</button></td>
-    </tr>
-  `).join('');
-}
-
-// تشغيل النظام فور فتح الصفحة والبدء في الجدولة الآلية
-window.onload = function() {
-  loadData();
-  startAutomatedReminderSystem();
-};
+window.onload = function() { loadData(); startAutomatedReminderSystem(); };
 </script>
 </body>
 </html>
