@@ -283,12 +283,7 @@
         <div id="hijriDateWrap" style="display:none">
           <div class="hijri-inputs">
             <input type="number" class="form-control" id="hijriDay" placeholder="اليوم" min="1" max="30" oninput="syncGregFromHijri()">
-            <select class="form-control" id="hijriMonth" onchange="syncGregFromHijri()">
-              <option value="1">محرم</option><option value="2">صفر</option><option value="3">ربيع الأول</option>
-              <option value="4">ربيع الآخر</option><option value="5">جمادى الأولى</option><option value="6">جمادى الآخرة</option>
-              <option value="7">رجب</option><option value="8">شعبان</option><option value="9">رمضان</option>
-              <option value="10">شوال</option><option value="11">ذو القعدة</option><option value="12">ذو الحجة</option>
-            </select>
+            <input type="number" class="form-control" id="hijriMonth" placeholder="الشهر" min="1" max="12" oninput="syncGregFromHijri()">
             <input type="number" class="form-control" id="hijriYear" placeholder="السنة" min="1400" max="1500" oninput="syncGregFromHijri()">
           </div>
           <div class="date-equiv" id="gregPreview"></div>
@@ -807,7 +802,7 @@ function syncGregFromHijri() {
   const m = parseInt(document.getElementById('hijriMonth').value, 10);
   const y = parseInt(document.getElementById('hijriYear').value, 10);
   const preview = document.getElementById('gregPreview');
-  if (!d || !m || !y) { preview.textContent = ''; return; }
+  if (!d || !m || !y || m < 1 || m > 12 || d < 1 || d > 30) { preview.textContent = ''; return; }
   const g = hijriToGregorian(y, m, d);
   const gStr = `${g.y}-${pad2(g.m)}-${pad2(g.d)}`;
   document.getElementById('formExpiry').value = gStr;
