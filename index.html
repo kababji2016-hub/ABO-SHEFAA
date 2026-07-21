@@ -156,6 +156,18 @@
   .hijri-inputs { display: grid; grid-template-columns: 0.8fr 1.6fr 1fr; gap: 6px; }
   .date-equiv { font-size: 12px; color: var(--muted); margin-top: 6px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; }
   .hijri-note { font-size: 10px; color: var(--muted); display: block; margin-top: 2px; }
+
+  .type-label-row { display: flex; align-items: center; justify-content: space-between; }
+  .type-mgmt-icons { display: flex; gap: 4px; }
+  .type-icon-btn { border: 1.5px solid var(--border); background: #fff; border-radius: 6px; width: 26px; height: 26px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+  .type-icon-btn:hover { background: #f1f5f9; }
+  .type-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .type-row input.form-control { padding: 8px 10px; font-size: 13px; }
+  .type-row .ty-icon { max-width: 60px; text-align: center; }
+  .type-row .ty-del { background: #fff; border: 1px solid var(--red); color: var(--red); border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 700; cursor: pointer; font-family: 'Tajawal', sans-serif; }
+  .type-row .ty-del:hover { background: var(--red); color: #fff; }
+  .type-add-row { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
+  .type-warning { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.5; }
   .btn-save { background: #1E8449; color: #fff; border: none; border-radius: 9px; padding: 11px 24px; font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-save:hover { background: #196F3D; }
   .btn-save:disabled { opacity: 0.6; cursor: wait; }
@@ -253,13 +265,14 @@
       <input type="hidden" id="formRowNum">
       <input type="hidden" id="formMode">
       <div class="form-group">
-        <label>نوع الوثيقة</label>
-        <select class="form-control" id="formType">
-          <option value="اقامات">🪪 إقامة</option>
-          <option value="التامين الطبي">🏥 تأمين طبي</option>
-          <option value="عقود العمل">📄 عقد عمل</option>
-          <option value="السجلات والرخص">📜 سجل / رخصة</option>
-        </select>
+        <label class="type-label-row">
+          <span>نوع الوثيقة</span>
+          <span class="type-mgmt-icons">
+            <button type="button" class="type-icon-btn" onclick="openTypeManager()" title="إدارة الأنواع">✏️</button>
+            <button type="button" class="type-icon-btn" onclick="openTypeManager(true)" title="إضافة نوع جديد">➕</button>
+          </span>
+        </label>
+        <select class="form-control" id="formType"></select>
       </div>
       <div class="form-group">
         <label>اسم الموظف / الوثيقة</label>
@@ -292,6 +305,28 @@
       <div class="form-actions">
         <button class="btn-cancel" onclick="closeDocModal()">إلغاء</button>
         <button class="btn-save" id="btnSave" onclick="saveDoc()">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- موديل إدارة أنواع الوثائق -->
+<div class="modal-overlay" id="typeManagerModal">
+  <div class="form-modal-box">
+    <div class="modal-header">
+      <h2>⚙️ إدارة أنواع الوثائق</h2>
+      <button class="close-modal" onclick="closeTypeManager()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="typeManagerList"></div>
+      <div class="type-add-row">
+        <input type="text" class="form-control" id="newTypeIcon" placeholder="رمز 📁" maxlength="4" style="max-width:70px">
+        <input type="text" class="form-control" id="newTypeName" placeholder="اسم النوع الجديد...">
+        <button class="btn-save" onclick="addNewType()">➕ إضافة</button>
+      </div>
+      <p class="type-warning">⚠️ ملاحظة: تعديل اسم/رمز نوع موجود آمن تماماً. أما إضافة نوع جديد فيُحفظ في هذا الجهاز، ولازم تتأكد إنه بعد حفظ أول وثيقة بهذا النوع أنها ظهرت صح في تبويب "جرد الوثائق".</p>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeTypeManager()">إغلاق</button>
       </div>
     </div>
   </div>
@@ -509,9 +544,87 @@ function statusLabel(days) {
   if (days <= 14) return `متبقي ${days} يوم 🟠`;
   return `متبقي ${days} يوم`;
 }
+// ── أنواع الوثائق (قابلة للتعديل والإضافة) ───────────────
+const DEFAULT_DOC_TYPES = [
+  { key: 'اقامات', icon: '🪪', label: 'إقامة' },
+  { key: 'التامين الطبي', icon: '🏥', label: 'تأمين طبي' },
+  { key: 'عقود العمل', icon: '📄', label: 'عقد عمل' },
+  { key: 'السجلات والرخص', icon: '📜', label: 'رخصة / سجل' }
+];
+function loadDocTypes() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('kababji_doc_types') || 'null');
+    if (Array.isArray(saved) && saved.length) return saved;
+  } catch (e) {}
+  return DEFAULT_DOC_TYPES.map(t => ({ ...t }));
+}
+function saveDocTypesToStorage() { localStorage.setItem('kababji_doc_types', JSON.stringify(DOC_TYPES)); }
+let DOC_TYPES = loadDocTypes();
+
 function docTypeLabel(type) {
-  const m = { 'اقامات':'🪪 إقامة', 'التامين الطبي':'🏥 تأمين طبي', 'عقود العمل':'📄 عقد عمل', 'السجلات والرخص':'📜 رخصة / سجل' };
-  return m[type] || type;
+  const t = DOC_TYPES.find(x => x.key === type);
+  return t ? `${t.icon} ${t.label}` : type;
+}
+
+function populateFormTypeSelect() {
+  const sel = document.getElementById('formType');
+  const current = sel.value;
+  sel.innerHTML = DOC_TYPES.map(t => `<option value="${t.key}">${t.icon} ${t.label}</option>`).join('');
+  if (current && DOC_TYPES.some(t => t.key === current)) sel.value = current;
+}
+
+function openTypeManager(focusAdd) {
+  populateFormTypeSelect();
+  renderTypeManagerList();
+  document.getElementById('typeManagerModal').style.display = 'flex';
+  if (focusAdd) setTimeout(() => document.getElementById('newTypeName').focus(), 50);
+}
+function closeTypeManager() {
+  document.getElementById('typeManagerModal').style.display = 'none';
+  populateFormTypeSelect();
+  renderAll();
+}
+
+function renderTypeManagerList() {
+  const el = document.getElementById('typeManagerList');
+  el.innerHTML = DOC_TYPES.map((t, i) => `
+    <div class="type-row">
+      <input type="text" class="form-control ty-icon" value="${t.icon}" maxlength="4" onchange="updateTypeField(${i},'icon',this.value)">
+      <input type="text" class="form-control" value="${t.label}" onchange="updateTypeField(${i},'label',this.value)">
+      <button class="ty-del" onclick="deleteType(${i})">🗑️ حذف</button>
+    </div>
+  `).join('');
+}
+
+function updateTypeField(index, field, value) {
+  value = value.trim();
+  if (!value) return;
+  DOC_TYPES[index][field] = value;
+  saveDocTypesToStorage();
+}
+
+function deleteType(index) {
+  const t = DOC_TYPES[index];
+  if (!confirm(`حذف نوع "${t.label}" من القائمة؟\nالوثائق المسجلة بهذا النوع لن تُحذف، لكنها لن تظهر ضمن التصنيفات بعد الآن.`)) return;
+  DOC_TYPES.splice(index, 1);
+  saveDocTypesToStorage();
+  renderTypeManagerList();
+  populateFormTypeSelect();
+}
+
+function addNewType() {
+  const iconEl = document.getElementById('newTypeIcon');
+  const nameEl = document.getElementById('newTypeName');
+  const icon = iconEl.value.trim() || '📁';
+  const name = nameEl.value.trim();
+  if (!name) { showToast('بيانات ناقصة', 'يرجى كتابة اسم النوع الجديد.', 'warning'); return; }
+  if (DOC_TYPES.some(t => t.key === name)) { showToast('نوع مكرر', 'هذا النوع موجود بالفعل.', 'warning'); return; }
+  DOC_TYPES.push({ key: name, icon, label: name });
+  saveDocTypesToStorage();
+  iconEl.value = ''; nameEl.value = '';
+  renderTypeManagerList();
+  populateFormTypeSelect();
+  showToast('تمت الإضافة ✅', `تمت إضافة نوع "${name}". تأكد من صحة حفظ أول وثيقة به.`, 'success');
 }
 
 // ── تحويل التاريخ الهجري / الميلادي (خوارزمية أم القرى الجدولية) ─
@@ -626,7 +739,7 @@ function renderAlertsTab(el) {
       <div class="chart-panel"><div style="position:relative;height:200px"><canvas id="statusChart"></canvas></div></div>
       <div class="chart-panel"><div style="position:relative;height:200px"><canvas id="typeChart"></canvas></div></div>
     </div>`;
-  const types = ['اقامات','التامين الطبي','عقود العمل','السجلات والرخص'];
+  const types = DOC_TYPES.map(t => t.key);
   let tables = '';
   for (const type of types) {
     const items = urgent.filter(r => r.type === type);
@@ -643,7 +756,7 @@ function renderPeriodTab(el, min, max, title) {
 }
 
 function renderAllDocsTab(el) {
-  const filters = [{key:'all',label:'🗂️ الكل'},{key:'اقامات',label:'🪪 الإقامات'},{key:'التامين الطبي',label:'🏥 التأمين'},{key:'عقود العمل',label:'📄 العقود'},{key:'السجلات والرخص',label:'📜 الرخص'}];
+  const filters = [{key:'all',label:'🗂️ الكل'}, ...DOC_TYPES.map(t => ({ key: t.key, label: `${t.icon} ${t.label}` }))];
   el.innerHTML = `<div class="section-title">📋 فلترة وبحث</div><div class="filter-bar">${filters.map(f=>`<button class="filter-btn ${f.key===currentSubFilter?'active':''}" onclick="applySubFilter('${f.key}',this)">${f.label}</button>`).join('')}</div><div class="search-export-container"><div class="search-box"><input type="text" id="tableSearch" value="${searchQuery}" placeholder="🔍 ابحث..." oninput="triggerSearch(this.value)"></div><button class="export-btn" onclick="exportTableToCSV()">📥 تصدير Excel</button></div><div class="full-table"><div class="table-wrapper"><table><thead><tr><th>#</th><th>الاسم</th><th>الفرع</th><th>النوع</th><th>تاريخ الانتهاء</th><th>الوضعية</th><th>إجراء</th></tr></thead><tbody id="allDocsTableBody"></tbody></table></div></div>`;
   filterAndDrawTable();
 }
@@ -727,7 +840,7 @@ function filterArchiveTable() {
 
 // ── إدارة الوثائق (CRUD) ────────────────────────────────
 function renderManageTab(el) {
-  const filters = [{key:'all',label:'🗂️ الكل'},{key:'اقامات',label:'🪪 الإقامات'},{key:'التامين الطبي',label:'🏥 التأمين'},{key:'عقود العمل',label:'📄 العقود'},{key:'السجلات والرخص',label:'📜 الرخص'}];
+  const filters = [{key:'all',label:'🗂️ الكل'}, ...DOC_TYPES.map(t => ({ key: t.key, label: `${t.icon} ${t.label}` }))];
   el.innerHTML = `
     <div class="manage-header">
       <div class="section-title" style="margin:0">⚙️ إدارة الوثائق — إضافة وتعديل وحذف</div>
@@ -812,6 +925,7 @@ function syncGregFromHijri() {
 function openDocModal(indexOrNull) {
   const branches = [...new Set(rawData.map(r => r.branch).filter(b => b && b !== '—'))].sort();
   document.getElementById('branchesList').innerHTML = branches.map(b => `<option value="${b}">`).join('');
+  populateFormTypeSelect();
   setDateInputMode('g');
   document.getElementById('hijriDay').value = '';
   document.getElementById('hijriMonth').value = '1';
@@ -832,7 +946,7 @@ function openDocModal(indexOrNull) {
     document.getElementById('formModalTitle').textContent = '➕ إضافة وثيقة / موظف جديد';
     document.getElementById('formMode').value = 'add';
     document.getElementById('formRowNum').value = '';
-    document.getElementById('formType').value = 'اقامات';
+    if (DOC_TYPES.length) document.getElementById('formType').value = DOC_TYPES[0].key;
     document.getElementById('formType').disabled = false;
     document.getElementById('formName').value = '';
     document.getElementById('formBranch').value = '';
